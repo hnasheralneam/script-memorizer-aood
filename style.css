@@ -1,0 +1,45 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #fff;
+}
+
+p {
+  line-height: 2rem;
+}
+
+
+.hidden {
+  color: #eee;
+  background-color: #eee;
+  transition: .2s;
+  margin: 0 0;
+  padding: .15rem .3rem;
+  border-radius: .4rem;
+}
+
+.hidden:hover {
+  color: #fff;
+  background-color: #45d965;
+}
+
+.shown {
+  color: #fff;
+  background-color: #45d965;
+}
+
+#input {
+  box-sizing: border-box;
+  display: block;
+  width: calc(100% - 2rem);
+  margin: .2rem 1rem;
+  padding: .5rem;
+  background-color: #eee;
+  border-radius: .4rem;
+  border: none;
+  font-family: serif;
+  font-size: 1rem;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Script Memorizer AOOD</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<p>Paste your script here</p>
+<textarea name="input" id="input" cols="50" rows="10"></textarea>
+<br>
+<p for="skip-distance">skip word every <input id="skip-distance" type="number" value="2" min="0" max="20"> words</p>
+<button onclick="main()">Run</button>
+<br><br>
+<p class="output"></p>
+<br><br>
+<button onclick="showAll()">Show all</button>
+<button onclick="hideAll()">Hide all</button>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>

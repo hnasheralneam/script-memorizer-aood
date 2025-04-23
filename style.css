@@ -1,11 +1,49 @@
+:root {
+  --theme-color: #ff3b21;
+}
+
 * {
   padding: 0;
   margin: 0;
+  font-family: sans-serif;
 }
 
 body {
+  display: grid;
+  grid-template-columns: 18rem auto;
   background-color: #fff;
 }
+
+.sidebar {
+  background-color: #eee;
+  height: 100vh;
+  border-radius: 0 1rem 1rem 0;
+}
+
+.content {
+  margin: .5rem 1rem;
+}
+
+
+.saved-scripts {
+  margin: 0 1rem;
+  list-style-type: none;
+}
+
+.saved-scripts li {
+  display: block;
+  background-color: #fff;
+  border-radius: .5rem;
+  margin: .5rem 0;
+  padding: .6rem;
+}
+
+.saved-scripts li.new-script {
+  text-align: center;
+  color: #fff;
+  background-color: var(--theme-color);
+}
+
 
 p {
   line-height: 2rem;

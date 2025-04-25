@@ -24,16 +24,43 @@ init();
 function init() {
   savedScriptNames = SaveManager.getScriptNames();
 
+  if(!savedScriptNames){
+    savedScriptNames = [];
+    localStorage.setItem("scriptmemorizer:scriptnames", JSON.stringify(savedScriptNames));
+  }
+
+  let list = document.querySelector(".saved-scripts");
+  savedScriptNames.forEach(name => {
+    let label = document.createElement("li");
+    label.textContent = name;
+    list.appendChild(label);
+  });
+
+  let scriptNames = savedScriptNames.getScriptNames();
+  let scriptList = document.getElementById("script-list");
+    scriptNames.forEach(name => {
+        let option = document.createElement("li");
+        option.value = name;
+        option.textContent = name;
+        scriptList.appendChild(option);
+    });
 }
 
 
 
 
 
-function main() {
+function main(splitter) {
   let input = document.querySelector("#input").value;
   let string = input == "" ? "here is a piece of example text." : input;
-  let words = string.split(" ");
+  let words = string.split(splitter);
+  if(splitter != " "){
+    for(let i = 0; i < words.length-1; i++){
+      words[i] = words[i]+splitter;
+    }
+  }
+  
+  alert(typeof words);
 
   //saves current script to local storage
   //saveToLocalStorage(string);
@@ -78,25 +105,24 @@ function hideAll() {
 }
 //Shows the script editor after it has disappeared
 function showScriptEditor() {
-  alert("showing script");
   document.getElementById("input").style.visibility = "visible";
 
 }
 
 
-// function saveToLocalStorage(text) {
-//   let parsedTextArray = parseText(text);
-//   localStorage.setItem(a, parsedTextArray);
-// }
+function saveToLocalStorage(text) {
+  let parsedTextArray = parseText(text);
+  localStorage.setItem(a, parsedTextArray);
+}
 
 
 function parseText(text) {
-  let words = text.split("\n");
+  let lines = text.split("\n");
   let parsedText = "";
   let parsedTextArray;
   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
-  for (let word of words) {
-    if (word.match(/\n/g)) continue;
+  for (let line of lines) {
+    if (line.match(/\n/g)) continue;
     parsedText += `<span class="hidden">${word}</span> `;
   }
 
@@ -112,7 +138,42 @@ function parseText(text) {
 
 }
 
-// takes in input from parseText, or saved fiels
-function showOnPage() {
+// when called, function will take in the name of the script then display it in the output
+function showOnPage(name) {
+  let script = SaveManager.getScript(name);
+  let lines = script.lines;
+  let htmlOutput = "";
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].match(/\n/g)) continue;
+      htmlOutput += lines[i] + " ";
+  }
+  document.querySelector(".output").innerHTML = htmlOutput;
+}
 
+//adds another label on the side
+function addNewScript(){
+  let name = prompt("What would you like to name your chat");
+  if(!name) return;
+
+  if(savedScriptNames.includes(name)){
+    alert("This name already exists");
+
+    let num = 1;
+    for(let i = 0; i < savedScriptNames.length; i++){
+      if(savedScriptNames[i] == name){num++};
+    }
+    let newName = name + "" + num;
+    SaveManager.saveScript(newName, []);
+    return;
+  } else {
+    //adds the new script as an object
+    SaveManager.saveScript(name, []);
+  }
+
+  
+  //list of labels on the side
+  let list = document.querySelector(".saved-scripts");
+  let newScript = document.createElement("li");
+  newScript.textContent = name;
+  list.appendChild(newScript);
 }

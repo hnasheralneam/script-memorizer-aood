@@ -11,7 +11,7 @@
   Saved scripts
   (will be generated through js later)
   <ul class="saved-scripts">
-    <li class="new-script"> + new script</li>
+    <li class="new-script" onclick="addNewScript()"> + new script</li>
     <li>hamlet, act 1</li>
     <li>hamlet, act 3</li>
     <li>whatever</li>
@@ -22,17 +22,21 @@
   <button onclick="showScriptEditor()">Show</button>
   <textarea name="input" id="input" cols="50" rows="10"></textarea>
   <br>
+  <span>
+    <input type = "radio">
   <p for="skip-distance">skip word every <input id="skip-distance" type="number" value="2" min="0" max="20"> words</p>
   <p for=character">Input character for memorization </p>
   <input id="character" type = "text"><br>
 
-  <button onclick="main()">Run</button>
+  <button onclick="main(' ')">By Word</button>
+  <button onclick = "main('.')">By Sentence</button>
   <br><br>
   <p class="output"></p>
   <br><br>
   <button>
   <button onclick="showAll()">Show all</button>
   <button onclick="hideAll()">Hide all</button>
+  
   <script src="./script.js"></script>
 
 

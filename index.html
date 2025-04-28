@@ -1,46 +1,44 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Script Memorizer AOOD</title>
   <link rel="stylesheet" href="./style.css">
 
 </head>
+
 <body>
-<div class="sidebar">
-  Saved scripts
-  (will be generated through js later)
-  <ul class="saved-scripts">
-    <li class="new-script" onclick="addNewScript()"> + new script</li>
-    <li>hamlet, act 1</li>
-    <li>hamlet, act 3</li>
-    <li>whatever</li>
-  </ul>
-</div>
-<div class="content">
-  <p>Paste your script here</p>
-  <button onclick="showScriptEditor()">Show</button>
-  <textarea name="input" id="input" cols="50" rows="10"></textarea>
-  <br>
-  <span>
-    <input type = "radio">
-  <p for="skip-distance">skip word every <input id="skip-distance" type="number" value="2" min="0" max="20"> words</p>
-  <p for=character">Input character for memorization </p>
-  <input id="character" type = "text"><br>
+  <div class="sidebar">
+    <h1>Saved scripts</h1>
+    <ul class="saved-scripts">
+      <li class="new-script" onclick="addNewScript()"> + new script</li>
+    </ul>
+  </div>
+  <div class="content">
+    <div class="input-parent">
+      <button onclick="showScriptEditor()">Show/hide script editor</button>
+      <textarea name="input" id="input" cols="50" rows="10" placeholder="paste your script here"></textarea>
+    </div>
+    <div class="settings">
+      <br>
+      <p for="skip-distance">skip word every <input id="skip-distance" type="number" value="2" min="0" max="20"> words
+      </p>
+      <p for=character">Input character for memorization </p>
+      <input id="character" type="text"><br>
 
-  <button onclick="main(' ')">By Word</button>
-  <button onclick = "main('.')">By Sentence</button>
-  <br><br>
-  <p class="output"></p>
-  <br><br>
-  <button>
-  <button onclick="showAll()">Show all</button>
-  <button onclick="hideAll()">Hide all</button>
-  
+      <button onclick="main(' ')">By Word</button>
+      <button onclick="main(/[?=.?!]/)">By Sentence</button>
+      <br><br>
+    </div>
+    <div class="output-parent">
+      <p class="output"></p>
+      <br><br>
+      <button>
+      <button onclick="showAll()">Show all</button>
+      <button onclick="hideAll()">Hide all</button>
+    </div>
+  </div>
   <script src="./script.js"></script>
-
-
-
-</div>
 </body>
 </html>

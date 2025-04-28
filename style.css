@@ -70,11 +70,12 @@ p {
   background-color: #45d965;
 }
 
+
+/* input */
 #input {
   box-sizing: border-box;
   display: block;
-  width: calc(100% - 2rem);
-  margin: .2rem 1rem;
+  width: 100%;
   padding: .5rem;
   background-color: #eee;
   border-radius: .4rem;
@@ -82,3 +83,16 @@ p {
   font-family: serif;
   font-size: 1rem;
 }
+
+.input-parent {
+  position: relative;
+  padding: .2rem 1rem;
+}
+
+.input-parent button {
+  position: absolute;
+  left: 1.2rem;
+  bottom: .4rem;
+}
+
+/* other */

@@ -4,6 +4,8 @@ const SaveManager = {
     let data = {
       name: name,
       lines: linesArray,
+      skipDistance: document.getElementById("skip-distance").value,
+      character: document.getElementById("character").value,
       lastEdit: Date.now()
     }
     localStorage.setItem("scriptmemorizer-" + name, JSON.stringify(data));
@@ -36,10 +38,19 @@ async function init() {
   console.log(savedScriptNames);
   savedScriptNames.forEach(name => {
     let label = document.createElement("li");
-    label.addEventListener("click", showOnPage, name);
+    label.addEventListener("click", () => {
+        showOnPage(name);
+        document.querySelector(".active")?.classList.remove("active");
+        label.classList.add("active");
+    });
+    label.addEventListener("change", () => { 
+        console.log("test1");
+        SaveManager.saveScript(label.name, document.getElementById("input").value);
+    });
     label.textContent = name;
     list.appendChild(label);
   });
+
 }
 
 
@@ -79,7 +90,6 @@ function main(splitter) {
   document.getElementById("input").style.visibility = "hidden";
 }
 
-
 function showAll() {
   let hiddenWords = document.querySelectorAll(".hidden");
   for (let element of hiddenWords) {
@@ -102,16 +112,18 @@ function showScriptEditor() {
 
 
 
-function parseText(text) {
-  let lines = text.split("\n");
+function parseText() {
+  let lines = document.querySelector("#input").value.split("\n");
+  
   let parsedText = "";
   let parsedTextArray;
   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
+  
   for (let line of lines) {
     if (line.match(/\n/g)) continue;
-    parsedText += `<span class="hidden">${word}</span> `;
+    parsedText += `<span class="hidden">${wordline}</span> `;
   }
-
+  alert("lines");
   parsedTextArray = parsedText.split(" ");
   for (let i = 0; i < parsedTextArray.length; i++) {
     if (parsedTextArray[i].match(/\n/g)) continue;
@@ -119,7 +131,9 @@ function parseText(text) {
       parsedTextArray[i] = `<span class="hidden">${parsedTextArray[i]}</span>`;
     }
   }
-
+  document.querySelector(".output").innerHTML = htparseTextArray;
+  document.getElementById("input").style.visibility = "hidden";
+  
   return parsedTextArray;
 
 }
@@ -135,6 +149,32 @@ function showOnPage(name) {
     htmlOutput += lines[i] + " ";
   }
   document.querySelector(".output").innerHTML = htmlOutput;
+  document.getElementById("input").value = htmlOutput;
+
+  
+}
+
+//creates new sidebar with the new script
+function showSavedScript(){
+  //clears the sidebar
+  let list = document.querySelector("saved-scripts");
+  list.innerHTML = "";
+  
+  //adds the add new script button
+  let addScriptButton = document.createElement("li");
+  addScriptButton.classList.add("new-script");
+  addScriptButton.textContent = "+ new script";
+  addScriptButton.onclick = addNewScript;
+  list.appendChild("addScriptButton");
+  //let newScript = document.createElement("li");
+  
+  savedScriptNames.array.forEach(name => {
+    if(name === "+ new script")return;
+    let newScript = document.createElement("li");
+    newScript.textContent = name;
+    newScript.addEventListener("click", showOnPage(name));
+    list.appendChild("newScript");
+  });
 }
 
 //adds another label on the side

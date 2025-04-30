@@ -1,22 +1,32 @@
 let savedScriptNames;
+let activeScript = {
+   id: window.crypto.randomUUID(),
+   name: "New script"
+};
+
 const SaveManager = {
-   saveScript(name, linesArray) {
+   saveScript(id, name, raw, linesArray) {
       let data = {
+         id: id,
          name: name,
-         lines: linesArray,
-         skipDistance: document.getElementById("skip-distance").value,
-         character: document.getElementById("character").value,
-         lastEdit: Date.now()
+         raw: raw,
+         // lines: linesArray,
+         // skipDistance: document.getElementById("skip-distance").value,
+         // character: document.getElementById("character").value,
+         // lastEdit: Date.now()
       }
-      localStorage.setItem("scriptmemorizer-" + name, JSON.stringify(data));
-      savedScriptNames.push(name);
-      localStorage.setItem("scriptmemorizer:scriptnames", JSON.stringify(savedScriptNames));
+      localStorage.setItem("scriptmemorizer-" + id, JSON.stringify(data));
+      savedScriptNames.push({
+         id: id,
+         name: name
+      });
+      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
    },
-   getScript(name) {
-      return JSON.parse(localStorage.getItem("scriptmemorizer-" + name));
+   getScript(id) {
+      return JSON.parse(localStorage.getItem("scriptmemorizer-" + id));
    },
    async getScriptNames() {
-      let a = JSON.parse(localStorage.getItem("scriptmemorizer:scriptnames"));
+      let a = JSON.parse(localStorage.getItem("scriptmemorizer:scriptids"));
       return a;
    }
 }
@@ -27,24 +37,12 @@ async function init() {
 
    if (!savedScriptNames) {
       savedScriptNames = [];
-      localStorage.setItem("scriptmemorizer:scriptnames", JSON.stringify(savedScriptNames));
+      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+      addNewScript();
    }
 
-   let list = document.querySelector(".saved-scripts");
-   savedScriptNames.forEach(name => {
-      let label = document.createElement("li");
-      label.addEventListener("click", () => {
-         showOnPage(name);
-         document.querySelector(".active")?.classList.remove("active");
-         label.classList.add("active");
-      });
-      label.addEventListener("change", () => {
-         SaveManager.saveScript(label.name, document.getElementById("input").value);
-      });
-      label.textContent = name;
-      list.appendChild(label);
-   });
 
+   showSavedScript();
 }
 
 
@@ -77,7 +75,119 @@ function main(splitter) {
 
    document.querySelector(".output").innerHTML = htmlOutput;
    hideScriptEditor();
+
+
+   SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
 }
+
+function parseText() {
+   let lines = document.querySelector("#input").value.split("\n");
+
+   let parsedText = "";
+   let parsedTextArray;
+   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
+
+   for (let line of lines) {
+      if (line.match(/\n/g)) continue;
+      parsedText += `<span class="hidden">${line}</span> `;
+   }
+   alert("lines");
+   parsedTextArray = parsedText.split(" ");
+   for (let i = 0; i < parsedTextArray.length; i++) {
+      if (parsedTextArray[i].match(/\n/g)) continue;
+      if (i % hideWordEvery == 0) {
+         parsedTextArray[i] = `<span class="hidden">${parsedTextArray[i]}</span>`;
+      }
+   }
+   // document.querySelector(".output").innerHTML = parsedTextArray;
+
+   return parsedTextArray;
+
+}
+
+// when called, function will take in the name of the script then display it in the output
+function showOnPage(id, name, raw) {
+   activeScript = { id, name }
+   let lines = parseText(raw);
+   let htmlOutput = "";
+   for (let i = 0; i < lines.length; i++) {
+      if (lines[i].match(/\n/g)) continue;
+      htmlOutput += lines[i] + " ";
+   }
+   document.querySelector(".output").innerHTML = htmlOutput;
+   document.getElementById("input").value = htmlOutput;
+
+
+}
+
+//creates new sidebar with the new script
+function showSavedScript() {
+   //clears the sidebar
+   let list = document.querySelector(".saved-scripts");
+   list.innerHTML = "";
+   console.log(list)
+
+   //adds the add new script button
+   let addScriptButton = document.createElement("li");
+   addScriptButton.classList.add("new-script");
+   addScriptButton.addEventListener("click", addNewScript);
+   addScriptButton.textContent = " + new script";
+   list.appendChild(addScriptButton);
+   //let newScript = document.createElement("li");
+
+   savedScriptNames.forEach(({ id, name }) => {
+      if (name === "+ new script") return;
+      let newScript = document.createElement("li");
+      newScript.textContent = name;
+      newScript.addEventListener("click", () => {
+         showOnPage(id, name, SaveManager.getScript(id).raw);
+         document.querySelector(".active")?.classList.remove("active");
+         newScript.classList.add("active");
+      });
+      // ?
+      // newScript.addEventListener("change", () => {
+      //    SaveManager.saveScript(id, name, document.getElementById("input").value);
+      // });
+      list.appendChild(newScript);
+   });
+}
+
+//adds another label on the side
+function addNewScript() {
+   let name = prompt("What would you like to name your chat");
+   if (!name) return;
+
+   let id = window.crypto.randomUUID();
+
+   if (savedScriptNames.find((obj) => obj.name == name)) {
+      // alert("This name already exists");
+
+      let num = 1;
+      let baseName = name;
+      for (let i = 0; i < savedScriptNames.length; i++) {
+         if (savedScriptNames[i] == name) { num++ };
+      }
+      name = baseName + "" + num;
+   }
+   showOnPage(id, name, "");
+   // SaveManager.saveScript(id, name, ""); // document.getElementById("input").value
+
+   //list of labels on the side
+   let list = document.querySelector(".saved-scripts");
+   let newScript = document.createElement("li");
+   newScript.textContent = name;
+   list.appendChild(newScript);
+}
+
+
+
+
+
+
+
+
+
+
 
 function showAll() {
    let hiddenWords = document.querySelectorAll(".hidden");
@@ -111,98 +221,4 @@ function hideScriptEditor() {
    document.querySelector("#input").style.height = "2rem";
    document.querySelector("#input").style.opacity = "0";
    document.querySelector("#input").style.pointerEvents = "none";
-}
-
-
-
-function parseText() {
-   let lines = document.querySelector("#input").value.split("\n");
-
-   let parsedText = "";
-   let parsedTextArray;
-   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
-
-   for (let line of lines) {
-      if (line.match(/\n/g)) continue;
-      parsedText += `<span class="hidden">${wordline}</span> `;
-   }
-   alert("lines");
-   parsedTextArray = parsedText.split(" ");
-   for (let i = 0; i < parsedTextArray.length; i++) {
-      if (parsedTextArray[i].match(/\n/g)) continue;
-      if (i % hideWordEvery == 0) {
-         parsedTextArray[i] = `<span class="hidden">${parsedTextArray[i]}</span>`;
-      }
-   }
-   document.querySelector(".output").innerHTML = htparseTextArray;
-   document.getElementById("input").style.visibility = "hidden";
-
-   return parsedTextArray;
-
-}
-
-// when called, function will take in the name of the script then display it in the output
-function showOnPage(name) {
-   let script = SaveManager.getScript(name);
-   let lines = script.lines;
-   let htmlOutput = "";
-   for (let i = 0; i < lines.length; i++) {
-      if (lines[i].match(/\n/g)) continue;
-      htmlOutput += lines[i] + " ";
-   }
-   document.querySelector(".output").innerHTML = htmlOutput;
-   document.getElementById("input").value = htmlOutput;
-
-
-}
-
-//creates new sidebar with the new script
-function showSavedScript() {
-   //clears the sidebar
-   let list = document.querySelector("saved-scripts");
-   list.innerHTML = "";
-
-   //adds the add new script button
-   let addScriptButton = document.createElement("li");
-   addScriptButton.classList.add("new-script");
-   addScriptButton.textContent = "+ new script";
-   addScriptButton.onclick = addNewScript;
-   list.appendChild("addScriptButton");
-   //let newScript = document.createElement("li");
-
-   savedScriptNames.array.forEach(name => {
-      if (name === "+ new script") return;
-      let newScript = document.createElement("li");
-      newScript.textContent = name;
-      newScript.addEventListener("click", showOnPage(name));
-      list.appendChild("newScript");
-   });
-}
-
-//adds another label on the side
-function addNewScript() {
-   let name = prompt("What would you like to name your chat");
-   if (!name) return;
-
-   if (savedScriptNames.includes(name)) {
-      alert("This name already exists");
-
-      let num = 1;
-      let baseName = name;
-      for (let i = 0; i < savedScriptNames.length; i++) {
-         if (savedScriptNames[i] == name) { num++ };
-      }
-      name = baseName + "" + num;
-      SaveManager.saveScript(name, document.getElementById("input").value);
-   } else {
-      //adds the new script as an object
-      SaveManager.saveScript(name, document.getElementById("input").value);
-   }
-
-
-   //list of labels on the side
-   let list = document.querySelector(".saved-scripts");
-   let newScript = document.createElement("li");
-   newScript.textContent = name;
-   list.appendChild(newScript);
 }

@@ -5,7 +5,7 @@ let activeScript = {
 };
 
 const SaveManager = {
-   saveScript(id, name, raw, linesArray) {
+   saveScript(id, name, raw) {
       let data = {
          id: id,
          name: name,
@@ -16,10 +16,14 @@ const SaveManager = {
          // lastEdit: Date.now()
       }
       localStorage.setItem("scriptmemorizer-" + id, JSON.stringify(data));
-      savedScriptNames.push({
+      let script = {
          id: id,
          name: name
-      });
+      };
+      if (!savedScriptNames.find((obj) => obj.id == id)) {
+         savedScriptNames.push(script);
+         showSavedScripts();
+      }
       localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
    },
    getScript(id) {
@@ -28,6 +32,13 @@ const SaveManager = {
    async getScriptNames() {
       let a = JSON.parse(localStorage.getItem("scriptmemorizer:scriptids"));
       return a;
+   },
+   reset() {
+      let confirmation = confirm("Are you sure you want to reset everything?");
+      if (confirmation) {
+         localStorage.clear();
+         location.reload();
+      }
    }
 }
 
@@ -41,11 +52,8 @@ async function init() {
       addNewScript();
    }
 
-
-   showSavedScript();
+   showSavedScripts();
 }
-
-
 
 function main(splitter) {
    let input = document.querySelector("#input").value;
@@ -91,7 +99,7 @@ function parseText() {
       if (line.match(/\n/g)) continue;
       parsedText += `<span class="hidden">${line}</span> `;
    }
-   alert("lines");
+
    parsedTextArray = parsedText.split(" ");
    for (let i = 0; i < parsedTextArray.length; i++) {
       if (parsedTextArray[i].match(/\n/g)) continue;
@@ -107,25 +115,23 @@ function parseText() {
 
 // when called, function will take in the name of the script then display it in the output
 function showOnPage(id, name, raw) {
-   activeScript = { id, name }
+   activeScript = { id, name };
    let lines = parseText(raw);
    let htmlOutput = "";
    for (let i = 0; i < lines.length; i++) {
       if (lines[i].match(/\n/g)) continue;
       htmlOutput += lines[i] + " ";
    }
-   document.querySelector(".output").innerHTML = htmlOutput;
-   document.getElementById("input").value = htmlOutput;
-
-
+   document.querySelector(".output").innerHTML = "";
+   document.getElementById("input").value = raw;
+   showScriptEditor();
 }
 
 //creates new sidebar with the new script
-function showSavedScript() {
+function showSavedScripts() {
    //clears the sidebar
    let list = document.querySelector(".saved-scripts");
    list.innerHTML = "";
-   console.log(list)
 
    //adds the add new script button
    let addScriptButton = document.createElement("li");
@@ -139,7 +145,9 @@ function showSavedScript() {
       if (name === "+ new script") return;
       let newScript = document.createElement("li");
       newScript.textContent = name;
+      if (id == activeScript.id) newScript.classList.add("active");
       newScript.addEventListener("click", () => {
+         console.log("clicked ", name, id);
          showOnPage(id, name, SaveManager.getScript(id).raw);
          document.querySelector(".active")?.classList.remove("active");
          newScript.classList.add("active");
@@ -173,10 +181,7 @@ function addNewScript() {
    // SaveManager.saveScript(id, name, ""); // document.getElementById("input").value
 
    //list of labels on the side
-   let list = document.querySelector(".saved-scripts");
-   let newScript = document.createElement("li");
-   newScript.textContent = name;
-   list.appendChild(newScript);
+   SaveManager.saveScript(id, name, "");
 }
 
 

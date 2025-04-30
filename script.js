@@ -49,7 +49,6 @@ async function init() {
    if (!savedScriptNames) {
       savedScriptNames = [];
       localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
-      addNewScript();
    }
 
    showSavedScripts();
@@ -137,7 +136,7 @@ function showSavedScripts() {
    let addScriptButton = document.createElement("li");
    addScriptButton.classList.add("new-script");
    addScriptButton.addEventListener("click", addNewScript);
-   addScriptButton.textContent = " + new script";
+   addScriptButton.textContent = " + new line";
    list.appendChild(addScriptButton);
    //let newScript = document.createElement("li");
 
@@ -163,7 +162,7 @@ function showSavedScripts() {
 //adds another label on the side
 function addNewScript() {
    let name = prompt("What would you like to name your chat");
-   if (!name) return;
+   if (!name || name == "") return;
 
    let id = window.crypto.randomUUID();
 

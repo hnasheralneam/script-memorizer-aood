@@ -74,7 +74,7 @@ function main(splitter) {
             endingPunctuation = word.at(-1);
             word = word.substring(0, word.length - 1);
          }
-         htmlOutput += `<span class="hidden">${word}</span>${endingPunctuation} `;
+         htmlOutput += `<span class="hidden" onclick="toggleShow(this)">${word}</span>${endingPunctuation} `;
       }
       else {
          htmlOutput += word + " ";
@@ -88,7 +88,45 @@ function main(splitter) {
    SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
 }
 
-function parseText() {
+function toggleShow(element) {
+   if (element.classList.contains("shown")) {
+      element.clas
+   }
+}
+
+function parseText(raw) {
+    let lines;
+    let id = window.crypto.randomUUID();
+
+    if(document.getElementById("input").value.split('\n') == ""){
+        lines = document.getElementById("input").value.split('\n');
+    } else{
+        lines = SaveManager.getScript(id).raw.split('\n');
+    }
+    const characterLines = [];
+    let currentCharacter = null;
+    let currentLine = "";
+      
+    for (const line of lines) {
+        const lineTrimmed = line.trim();
+        if (lineTrimmed.endsWith(" ") && (lineTrimmed == lineTrimmed.toUpperCase()) && lineTrimmed.length > 2) {
+            if (currentCharacter && currentLine) {
+                characterLines.push(`${currentCharacter} ${currentLine.trim()}`);   
+            }
+            currentCharacter = lineTrimmed.slice(0, -1);
+            currentLine = "";
+        } else if (currentCharacter && lineTrimmed) {
+              currentLine += " " + lineTrimmed;
+          }
+      
+        if (currentCharacter && currentLine) {
+            characterLines.push(`${currentCharacter} ${currentLine.trim()}`);
+        }
+    }
+    document.querySelector(".output").innerHTML = characterLines;
+}
+ 
+/*
    let lines = document.querySelector("#input").value.split("\n");
 
    let parsedText = "";
@@ -107,11 +145,9 @@ function parseText() {
          parsedTextArray[i] = `<span class="hidden">${parsedTextArray[i]}</span>`;
       }
    }
-   // document.querySelector(".output").innerHTML = parsedTextArray;
-
+   //document.querySelector(".output").innerHTML = parsedTextArray.join(" ");
    return parsedTextArray;
-
-}
+    */
 
 // when called, function will take in the name of the script then display it in the output
 function showOnPage(id, name, raw) {
@@ -184,16 +220,6 @@ function addNewScript() {
    SaveManager.saveScript(id, name, "");
 }
 
-
-
-
-
-
-
-
-
-
-
 function showAll() {
    let hiddenWords = document.querySelectorAll(".hidden");
    for (let element of hiddenWords) {
@@ -226,4 +252,23 @@ function hideScriptEditor() {
    document.querySelector("#input").style.height = "2rem";
    document.querySelector("#input").style.opacity = "0";
    document.querySelector("#input").style.pointerEvents = "none";
+}
+
+function changeName(){
+   let name = prompt("What would you like to rename your script to?");
+   if (!name) return;
+
+   let id = window.crypto.randomUUID();
+
+   if (savedScriptNames.find((obj) => obj.name == name)) {
+      // alert("This name already exists");
+
+      let num = 1;
+      let baseName = name;
+      for (let i = 0; i < savedScriptNames.length; i++) {
+         if (savedScriptNames[i] == name) { num++ };
+      }
+      name = baseName + "" + num;
+   }
+   SaveManager.saveScript(activeScript.id, name, document.getElementById("input").value);
 }

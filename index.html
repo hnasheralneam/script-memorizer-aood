@@ -14,6 +14,7 @@
    </div>
    <div class="content">
       <h2>Script name</h2>
+      <button id = "changeButton" onclick="changeName()">Change Name of Script</button>
       <div class="input-parent">
          <button onclick="toggleScriptEditor()">Show/hide script editor</button>
          <textarea name="input" id="input" cols="50" rows="10" placeholder="paste your script here"></textarea>
@@ -28,7 +29,7 @@
 
          <button onclick="main(' ')">Run</button> <!-- by word-->
          <!-- <button onclick="main(/[?=.?!]/)">By Sentence</button> -->
-         <!-- <button onclick="parseText()">By Lines</button> -->
+        <button onclick="parseText(document.getElementById('input').value)">Run Lines</button>
          <br><br>
       </div>
       <div class="output-parent">

@@ -121,3 +121,8 @@ button:hover {
 button:active {
    background-color: #666;
 }
+
+#changeButton {
+   top: 0.4rem;
+   left: 1.2rem;
+}

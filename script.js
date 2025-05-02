@@ -30,8 +30,7 @@ const SaveManager = {
       return JSON.parse(localStorage.getItem("scriptmemorizer-" + id));
    },
    async getScriptNames() {
-      let a = JSON.parse(localStorage.getItem("scriptmemorizer:scriptids"));
-      return a;
+      return JSON.parse(localStorage.getItem("scriptmemorizer:scriptids"));
    },
    reset() {
       let confirmation = confirm("Are you sure you want to reset everything?");
@@ -97,62 +96,44 @@ function toggleShow(element) {
 function parseText(raw) {
     let lines;
     let id = window.crypto.randomUUID();
-
-    if(document.getElementById("input").value.split('\n') == ""){
-        lines = document.getElementById("input").value.split('\n');
-    } else{
-        lines = SaveManager.getScript(id).raw.split('\n');
+    let inputValue = raw.trim();
+    console.log("input value in parsetext" + inputValue);
+    if (inputValue === "") {
+        lines = raw.split('\n');
+    } else {
+        lines = inputValue.split('\n');
     }
+
     const characterLines = [];
     let currentCharacter = null;
     let currentLine = "";
-      
+
     for (const line of lines) {
         const lineTrimmed = line.trim();
-        if (lineTrimmed.endsWith(" ") && (lineTrimmed == lineTrimmed.toUpperCase()) && lineTrimmed.length > 2) {
+
+        if (lineTrimmed.endsWith(" ") && lineTrimmed === lineTrimmed.toUpperCase() && lineTrimmed.length > 2) {
             if (currentCharacter && currentLine) {
-                characterLines.push(`${currentCharacter} ${currentLine.trim()}`);   
+                characterLines.push(`${currentCharacter} ${currentLine.trim()}`);
             }
             currentCharacter = lineTrimmed.slice(0, -1);
             currentLine = "";
         } else if (currentCharacter && lineTrimmed) {
-              currentLine += " " + lineTrimmed;
-          }
-      
-        if (currentCharacter && currentLine) {
-            characterLines.push(`${currentCharacter} ${currentLine.trim()}`);
+            currentLine += " " + lineTrimmed;
         }
     }
-    document.querySelector(".output").innerHTML = characterLines;
+    // Final push for any remaining line
+    if (currentCharacter && currentLine) {
+        characterLines.push(`${currentCharacter} ${currentLine.trim()}`);
+    }
+    return characterLines.join("<br>");
 }
- 
-/*
-   let lines = document.querySelector("#input").value.split("\n");
-
-   let parsedText = "";
-   let parsedTextArray;
-   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
-
-   for (let line of lines) {
-      if (line.match(/\n/g)) continue;
-      parsedText += `<span class="hidden">${line}</span> `;
-   }
-
-   parsedTextArray = parsedText.split(" ");
-   for (let i = 0; i < parsedTextArray.length; i++) {
-      if (parsedTextArray[i].match(/\n/g)) continue;
-      if (i % hideWordEvery == 0) {
-         parsedTextArray[i] = `<span class="hidden">${parsedTextArray[i]}</span>`;
-      }
-   }
-   //document.querySelector(".output").innerHTML = parsedTextArray.join(" ");
-   return parsedTextArray;
-    */
 
 // when called, function will take in the name of the script then display it in the output
 function showOnPage(id, name, raw) {
-   activeScript = { id, name };
+    console.log(raw);
+    activeScript = { id, name };
    let lines = parseText(raw);
+   console.log(lines);
    let htmlOutput = "";
    for (let i = 0; i < lines.length; i++) {
       if (lines[i].match(/\n/g)) continue;
@@ -242,7 +223,8 @@ function toggleScriptEditor() {
    else hideScriptEditor();
 }
 
-function showScriptEditor() {
+function showScriptEditor() 
+{
    document.querySelector("#input").style.height = "15rem";
    document.querySelector("#input").style.opacity = "1";
    document.querySelector("#input").style.pointerEvents = "auto";
@@ -258,7 +240,7 @@ function changeName(){
    let name = prompt("What would you like to rename your script to?");
    if (!name) return;
 
-   let id = window.crypto.randomUUID();
+   //let id = window.crypto.randomUUID();
 
    if (savedScriptNames.find((obj) => obj.name == name)) {
       // alert("This name already exists");
@@ -271,4 +253,8 @@ function changeName(){
       name = baseName + "" + num;
    }
    SaveManager.saveScript(activeScript.id, name, document.getElementById("input").value);
+}
+
+function removeScript(){
+   
 }

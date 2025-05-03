@@ -31,6 +31,14 @@ body {
    list-style-type: none;
 }
 
+.saved-scripts li button {
+   display: none;
+}
+
+.saved-scripts li:hover button {
+   display: inline;
+}
+
 .saved-scripts li {
    display: block;
    background-color: #fff;

@@ -161,7 +161,32 @@ function showSavedScripts() {
    savedScriptNames.forEach(({ id, name }) => {
       if (name === "+ new script") return;
       let newScript = document.createElement("li");
-      newScript.textContent = name;
+      let label = document.createElement("span");
+      label.textContent = name;
+      label.classList.add("script-label");
+
+      let renameBtn = document.createElement("button");
+      renameBtn.textContent = "Rename";
+      renameBtn.title = "Rename script";
+      renameBtn.addEventListener("click", (e) => {
+         e.stopPropagation();
+         activeScript = { id, name };
+         changeName();
+      });
+
+      let deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.title = "Delete script";
+      deleteBtn.addEventListener("click", (e) => {
+         e.stopPropagation();
+         activeScript = { id, name };
+         removeScript();
+      });
+
+      newScript.appendChild(label);
+      newScript.appendChild(renameBtn);
+      newScript.appendChild(deleteBtn);
+
       if (id == activeScript.id) newScript.classList.add("active");
       newScript.addEventListener("click", () => {
          console.log("clicked ", name, id);
@@ -252,9 +277,26 @@ function changeName(){
       }
       name = baseName + "" + num;
    }
+
+   const script = savedScriptNames.find(s => s.id === activeScript.id);
+   if (script) script.name = name;
+   
    SaveManager.saveScript(activeScript.id, name, document.getElementById("input").value);
+   showSavedScripts();
 }
 
-function removeScript(){
-   
+function removeScript() {
+   if (!confirm("Are you sure you want to delete this script?")) return;
+
+   savedScriptNames = savedScriptNames.filter(script => script.id !== activeScript.id);
+   localStorage.removeItem("scriptmemorizer-" + activeScript.id);
+   localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+
+   if (savedScriptNames.length > 0) {
+      let first = savedScriptNames[0];
+      showOnPage(first.id, first.name, SaveManager.getScript(first.id).raw);
+   } else {
+      addNewScript(); 
+   }
+   showSavedScripts();
 }

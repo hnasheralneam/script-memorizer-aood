@@ -87,53 +87,56 @@ function main(splitter) {
    SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
 }
 
-function toggleShow(element) {
-   if (element.classList.contains("shown")) {
-      element.clas
-   }
-}
-
 function parseText(raw) {
-    let lines;
-    let id = window.crypto.randomUUID();
-    let inputValue = raw.trim();
-    console.log("input value in parsetext" + inputValue);
-    if (inputValue === "") {
-        lines = raw.split('\n');
-    } else {
-        lines = inputValue.split('\n');
-    }
-
+    // Split on newlines (preserves empty lines)
+    const lines = raw.split('\n');
+    let characters = [];
     const characterLines = [];
     let currentCharacter = null;
     let currentLine = "";
 
-    for (const line of lines) {
-        const lineTrimmed = line.trim();
+    for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;  // skip blank lines
 
-        if (lineTrimmed.endsWith(" ") && lineTrimmed === lineTrimmed.toUpperCase() && lineTrimmed.length > 2) {
+        // Detect a line that's ALL UPPERCASE (with optional trailing colon)
+        const cueMatch = line.match(/^([A-Z][A-Z0-9\s]*?):?$/);
+        if (cueMatch) {
+            // flush previous block
             if (currentCharacter && currentLine) {
-                characterLines.push(`${currentCharacter} ${currentLine.trim()}`);
+                characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
             }
-            currentCharacter = lineTrimmed.slice(0, -1);
+            // start new character
+            currentCharacter = cueMatch[1];
             currentLine = "";
-        } else if (currentCharacter && lineTrimmed) {
-            currentLine += " " + lineTrimmed;
+        }
+        else if (currentCharacter) {
+            // accumulate under current character
+            currentLine += (currentLine ? " " : "") + line;
+        }
+        for(i = 0; i < characters.length; i++){
+            if (characters[i] === currentCharacter) break;
+            else{
+                characters.push(currentCharacter);
+            }
         }
     }
-    // Final push for any remaining line
+
+    // final flush
     if (currentCharacter && currentLine) {
-        characterLines.push(`${currentCharacter} ${currentLine.trim()}`);
+        characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
     }
-    return characterLines.join("<br>");
+    // join however you like; here we use <br> for HTML display
+    console.log(characters);
+    showOnPage2(characterLines.join("<br>"));
 }
+
+
 
 // when called, function will take in the name of the script then display it in the output
 function showOnPage(id, name, raw) {
-    console.log(raw);
     activeScript = { id, name };
    let lines = parseText(raw);
-   console.log(lines);
    let htmlOutput = "";
    for (let i = 0; i < lines.length; i++) {
       if (lines[i].match(/\n/g)) continue;
@@ -141,6 +144,11 @@ function showOnPage(id, name, raw) {
    }
    document.querySelector(".output").innerHTML = "";
    document.getElementById("input").value = raw;
+   showScriptEditor();
+}
+
+function showOnPage2(script) {
+   document.querySelector(".output").innerHTML = script;
    showScriptEditor();
 }
 

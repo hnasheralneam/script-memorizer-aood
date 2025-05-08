@@ -1,4 +1,4 @@
-let savedScriptNames;
+let savedScriptNames = [];
 let activeScript = {
    id: window.crypto.randomUUID(),
    name: "New script"
@@ -15,7 +15,11 @@ const SaveManager = {
          // character: document.getElementById("character").value,
          // lastEdit: Date.now()
       }
-      localStorage.setItem("scriptmemorizer-" + id, JSON.stringify(data));
+      try {
+         localStorage.setItem("scriptmemorizer-" + id, JSON.stringify(data));
+      } catch (e) {
+         console.error("LocalStorage error:", e);
+      }
       let script = {
          id: id,
          name: name
@@ -24,7 +28,11 @@ const SaveManager = {
          savedScriptNames.push(script);
          showSavedScripts();
       }
-      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+      try {
+         localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+      } catch (e) {
+         console.error("LocalStorage error:", e);
+      }
    },
    getScript(id) {
       return JSON.parse(localStorage.getItem("scriptmemorizer-" + id));
@@ -35,7 +43,11 @@ const SaveManager = {
    reset() {
       let confirmation = confirm("Are you sure you want to reset everything?");
       if (confirmation) {
-         localStorage.clear();
+         try {
+            localStorage.clear();
+         } catch (e) {
+            console.error("LocalStorage error:", e);
+         }
          location.reload();
       }
    }
@@ -47,11 +59,19 @@ async function init() {
 
    if (!savedScriptNames) {
       savedScriptNames = [];
-      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+      try {
+         localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+      } catch (e) {
+         console.error("LocalStorage error:", e);
+      }
       addNewScript();
    }
 
+   console.log("Saved scripts:", savedScriptNames);
    showSavedScripts();
+    document.getElementById('input').addEventListener("change", () => {
+        SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
+    });
 }
 
 function main(splitter) {
@@ -114,11 +134,8 @@ function parseText(raw) {
             // accumulate under current character
             currentLine += (currentLine ? " " : "") + line;
         }
-        for(i = 0; i < characters.length; i++){
-            if (characters[i] === currentCharacter) break;
-            else{
-                characters.push(currentCharacter);
-            }
+        if (currentCharacter && !characters.includes(currentCharacter)) {
+            characters.push(currentCharacter);
         }
     }
 
@@ -136,12 +153,7 @@ function parseText(raw) {
 // when called, function will take in the name of the script then display it in the output
 function showOnPage(id, name, raw) {
     activeScript = { id, name };
-   let lines = parseText(raw);
    let htmlOutput = "";
-   for (let i = 0; i < lines.length; i++) {
-      if (lines[i].match(/\n/g)) continue;
-      htmlOutput += lines[i] + " ";
-   }
    document.querySelector(".output").innerHTML = "";
    document.getElementById("input").value = raw;
    showScriptEditor();
@@ -149,7 +161,7 @@ function showOnPage(id, name, raw) {
 
 function showOnPage2(script) {
    document.querySelector(".output").innerHTML = script;
-   showScriptEditor();
+   hideScriptEditor();
 }
 
 //creates new sidebar with the new script
@@ -202,10 +214,6 @@ function showSavedScripts() {
          document.querySelector(".active")?.classList.remove("active");
          newScript.classList.add("active");
       });
-      // ?
-      // newScript.addEventListener("change", () => {
-      //    SaveManager.saveScript(id, name, document.getElementById("input").value);
-      // });
       list.appendChild(newScript);
    });
 }
@@ -217,15 +225,12 @@ function addNewScript() {
 
    let id = window.crypto.randomUUID();
 
-   if (savedScriptNames.find((obj) => obj.name == name)) {
-      // alert("This name already exists");
-
+   if (savedScriptNames.find((obj) => obj.name === name)) {
       let num = 1;
       let baseName = name;
-      for (let i = 0; i < savedScriptNames.length; i++) {
-         if (savedScriptNames[i] == name) { num++ };
+      while (savedScriptNames.find((obj) => obj.name === name)) {
+         name = `${baseName} ${num++}`;
       }
-      name = baseName + "" + num;
    }
    showOnPage(id, name, "");
    // SaveManager.saveScript(id, name, ""); // document.getElementById("input").value
@@ -275,15 +280,12 @@ function changeName(){
 
    //let id = window.crypto.randomUUID();
 
-   if (savedScriptNames.find((obj) => obj.name == name)) {
-      // alert("This name already exists");
-
+   if (savedScriptNames.find((obj) => obj.name === name)) {
       let num = 1;
       let baseName = name;
-      for (let i = 0; i < savedScriptNames.length; i++) {
-         if (savedScriptNames[i] == name) { num++ };
+      while (savedScriptNames.find((obj) => obj.name === name)) {
+         name = `${baseName} ${num++}`;
       }
-      name = baseName + "" + num;
    }
 
    const script = savedScriptNames.find(s => s.id === activeScript.id);
@@ -297,8 +299,16 @@ function removeScript() {
    if (!confirm("Are you sure you want to delete this script?")) return;
 
    savedScriptNames = savedScriptNames.filter(script => script.id !== activeScript.id);
-   localStorage.removeItem("scriptmemorizer-" + activeScript.id);
-   localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+   try {
+      localStorage.removeItem("scriptmemorizer-" + activeScript.id);
+   } catch (e) {
+      console.error("LocalStorage error:", e);
+   }
+   try {
+      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+   } catch (e) {
+      console.error("LocalStorage error:", e);
+   }
 
    if (savedScriptNames.length > 0) {
       let first = savedScriptNames[0];

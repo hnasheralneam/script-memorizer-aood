@@ -120,7 +120,7 @@ function parseText(raw) {
         if (!line) continue;  // skip blank lines
 
         // Detect a line that's ALL UPPERCASE (with optional trailing colon)
-        const cueMatch = line.match(/^([A-Z][A-Z0-9\s]*?):?$/);
+        const cueMatch = line.match(/^([A-Z][A-Z0-9\s]*):?$/);
         if (cueMatch) {
             // flush previous block
             if (currentCharacter && currentLine) {
@@ -129,14 +129,14 @@ function parseText(raw) {
             // start new character
             currentCharacter = cueMatch[1];
             currentLine = "";
-        }
-        else if (currentCharacter) {
-            // accumulate under current character
-            currentLine += (currentLine ? " " : "") + line;
-        }
-        if (currentCharacter && !characters.includes(currentCharacter)) {
-            characters.push(currentCharacter);
-        }
+            if (!characters.includes(currentCharacter)) {
+               characters.push(currentCharacter);
+            }
+        }else if (currentCharacter) {
+            currentLine += line + " ";
+         }  
+        
+        
     }
 
     // final flush
@@ -145,7 +145,9 @@ function parseText(raw) {
     }
     // join however you like; here we use <br> for HTML display
     console.log(characters);
+    addDropdownCharacters([...characters]);
     showOnPage2(characterLines.join("<br>"));
+    return characterLines;
 }
 
 
@@ -317,4 +319,16 @@ function removeScript() {
       addNewScript(); 
    }
    showSavedScripts();
+}
+
+function addDropdownCharacters(characters){
+   const dropdown = document.getElementById("character-dropdown");
+    dropdown.innerHTML = '<option value="">Select a character</option>';
+
+    characters.forEach(character => {
+        const option = document.createElement("option");
+        option.value = character;
+        option.textContent = character;
+        dropdown.appendChild(option);
+    });
 }

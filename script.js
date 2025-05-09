@@ -33,6 +33,13 @@ const SaveManager = {
       } catch (e) {
          console.error("LocalStorage error:", e);
       }
+
+      if (!savedScriptNames.find((obj) => obj.id == id)) {
+         script.pinned = false;
+         savedScriptNames.push(script);
+         showSavedScripts();
+      }
+      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
    },
    getScript(id) {
       return JSON.parse(localStorage.getItem("scriptmemorizer-" + id));
@@ -190,7 +197,13 @@ function showSavedScripts() {
    list.appendChild(addScriptButton);
    //let newScript = document.createElement("li");
 
-   savedScriptNames.forEach(({ id, name }) => {
+   const sortedScripts = [...savedScriptNames].sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return a.name.localeCompare(b.name);
+   });
+   
+   sortedScripts.forEach(({ id, name, pinned }) => {  
       if (name === "+ new script") return;
       let newScript = document.createElement("li");
       let label = document.createElement("span");
@@ -215,6 +228,15 @@ function showSavedScripts() {
          removeScript();
       });
 
+      let pinBtn = document.createElement("button");
+      pinBtn.textContent = pinned ? "❤️" : "🤍";
+      pinBtn.title = pinned ? "Unpin script" : "Pin script";
+      pinBtn.addEventListener("click", (e) => {
+         e.stopPropagation();
+         togglePin(id);
+      });
+
+      newScript.appendChild(pinBtn);
       newScript.appendChild(label);
       newScript.appendChild(renameBtn);
       newScript.appendChild(deleteBtn);
@@ -341,4 +363,13 @@ function addDropdownCharacters(characters){
         option.textContent = character;
         dropdown.appendChild(option);
     });
+}
+
+function togglePin(scriptId) {
+   const script = savedScriptNames.find(s => s.id === scriptId);
+   if (script) {
+      script.pinned = !script.pinned;
+      localStorage.setItem("scriptmemorizer:scriptids", JSON.stringify(savedScriptNames));
+      showSavedScripts();
+   }
 }

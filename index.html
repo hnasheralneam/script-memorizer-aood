@@ -26,12 +26,13 @@
          <!-- <p for=character">Input character for memorization </p>
          <input id="character" type="text"><br> -->
 
-         <button onclick="main(' ')">Run</button> <!-- by word-->
-         <!-- <button onclick="main(/[?=.?!]/)">By Sentence</button> -->
+         <button onclick="main(document.querySelector('#input').value,' ')">Run</button> <!-- by word-->
+         <!-- <button onclick="main(/[\?=.?!]/)">By Sentence</button> -->
         <button onclick="parseText(document.getElementById('input').value)">Run Lines</button>
         <p>Select character for memorization</p>
          <select id="character-dropdown">
-            <option value="">Select a character</option>
+            <option value="">Select a character</option>    
+            
          </select>
          
       

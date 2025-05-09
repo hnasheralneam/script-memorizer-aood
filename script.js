@@ -81,38 +81,41 @@ async function init() {
     });
 }
 
-function main(splitter) {
-   let input = document.querySelector("#input").value;
-   let string = input;
-   if (string.length < 1) return;
-   let words = string.split(splitter);
-
-   let pos = 0;
-   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
-   let htmlOutput = "";
-   for (let word of words) {
-      pos++;
-      // skips if just whitespace
-      if (word.trim() === "") continue;
-      if (pos % hideWordEvery == 0) {
-         let endingPunctuation = "";
-         if (word.at(-1) == "." || word.at(-1) == ",") {
-            endingPunctuation = word.at(-1);
-            word = word.substring(0, word.length - 1);
-         }
-         htmlOutput += `<span class="hidden" onclick="toggleShow(this)">${word}</span>${endingPunctuation} `;
-      }
-      else {
-         htmlOutput += word + " ";
-      }
-   }
-
-   document.querySelector(".output").innerHTML = htmlOutput;
-   hideScriptEditor();
-
-
-   SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
-}
+function main(arg, splitter) {
+    let input = arg;
+    let string = input;
+    if (string.length < 1) return;
+    let words = string.split(splitter);
+ 
+    let pos = 0;
+    let hideWordEvery = document.querySelector("#skip-distance").value || 2;
+    let htmlOutput = "";
+    for (let word of words) {
+       pos++;
+       // skips if just whitespace
+       if (word.trim() === "") continue;
+       if (pos % hideWordEvery == 0) {
+          let endingPunctuation = "";
+          if (word.at(-1) == "." || word.at(-1) == ",") {
+             endingPunctuation = word.at(-1);
+             word = word.substring(0, word.length - 1);
+          }
+          htmlOutput += `<span class="hidden" onclick="toggleShow(this)">${word}</span>${endingPunctuation} `;
+       }
+       else {
+          htmlOutput += word + " ";
+       }
+    }
+ 
+    document.querySelector(".output").innerHTML = htmlOutput;
+    hideScriptEditor();
+ 
+ 
+    SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
+    return htmlOutput;
+ 
+ }
+ 
 
 function parseText(raw) {
     // Split on newlines (preserves empty lines)
@@ -152,20 +155,61 @@ function parseText(raw) {
     }
     // join however you like; here we use <br> for HTML display
 
-    console.log(characters);
-   //  let regex = new RegExp("\\b" + "ACT " + "\\b");
-   //  for(let i = 0; i < character.length; i++){
-   //    if(characters[i].contains("ACT ")){
-   //       let index = characters.search(regex);
-   //       if(index > -1){
-   //          characters.splice(index, 1);
-   //       }
-   //    }
-   //  }
-    addDropdownCharacters([...characters]);
-    showOnPage2(characterLines.join("<br>"));
-    return characterLines;
+    let mainCharacter = document.getElementById("character-dropdown").value;
+    let htmlOutput = "";
+    
+    for(let i = 0; i < characterLines.length; i++){
+        if(characterLines[i].includes(mainCharacter)){
+            let str = characterLines[i].slice(mainCharacter.length+1, characterLines[i].length);
+            htmlOutput += mainCharacter + ": " + main(str," ") + `<br>`;
+        } else {
+            htmlOutput += characterLines[i] + `<br>`;
+        }
+    }
+    showOnPage2(htmlOutput);
 }
+function parseForCharacter(){
+    
+    console.log("run");
+    let text = document.querySelector("#input").value;
+    let words = text.split("\n");
+    let characters = [];
+    let isNew = true;
+    let regex = /^([A-Z][A-Z0-9\s]*?):?$/;
+    for(let word of words){
+        if(regex.test(word)){
+            for(let character of characters){
+                if(word === character){
+                    console.log("duplicate");
+                    isNew = false;
+                }
+            }
+            if(isNew){
+                characters.push(word);
+            }
+            isNew = true;
+        }
+    }
+    
+    console.log(characters);
+    removeOptions(document.getElementById("character-dropdown"));
+    for(let character of characters){
+        document.getElementById("character-dropdown").add(new Option(character,character))
+    }
+    
+        console.log(characters);
+}
+function removeOptions(selectElement) {
+    let i, L = selectElement.options.length - 1;
+    for(i = L; i >= 0; i--) {
+       selectElement.remove(i);
+    }
+ }
+ 
+ 
+
+
+
 
 
 
@@ -211,6 +255,7 @@ function showSavedScripts() {
       label.classList.add("script-label");
 
       let renameBtn = document.createElement("button");
+      renameBtn.classList.add("btn-rename");
       renameBtn.textContent = "Rename";
       renameBtn.title = "Rename script";
       renameBtn.addEventListener("click", (e) => {
@@ -220,7 +265,8 @@ function showSavedScripts() {
       });
 
       let deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
+      deleteBtn.textContent = "🗑️";
+      deleteBtn.classList.add("btn-delete");
       deleteBtn.title = "Delete script";
       deleteBtn.addEventListener("click", (e) => {
          e.stopPropagation();
@@ -238,8 +284,8 @@ function showSavedScripts() {
 
       newScript.appendChild(pinBtn);
       newScript.appendChild(label);
-      newScript.appendChild(renameBtn);
       newScript.appendChild(deleteBtn);
+      newScript.appendChild(renameBtn);
 
       if (id == activeScript.id) newScript.classList.add("active");
       newScript.addEventListener("click", () => {
@@ -285,7 +331,6 @@ function hideAll() {
    for (let element of shownWords) {
       element.classList.remove("shown");
    }
-
 }
 //Shows the script editor after it has disappeared
 function toggleScriptEditor() {
@@ -373,3 +418,6 @@ function togglePin(scriptId) {
       showSavedScripts();
    }
 }
+document.querySelector("#input").addEventListener("input", () => {
+    parseForCharacter();
+});

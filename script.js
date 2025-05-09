@@ -144,7 +144,17 @@ function parseText(raw) {
         characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
     }
     // join however you like; here we use <br> for HTML display
+
     console.log(characters);
+   //  let regex = new RegExp("\\b" + "ACT " + "\\b");
+   //  for(let i = 0; i < character.length; i++){
+   //    if(characters[i].contains("ACT ")){
+   //       let index = characters.search(regex);
+   //       if(index > -1){
+   //          characters.splice(index, 1);
+   //       }
+   //    }
+   //  }
     addDropdownCharacters([...characters]);
     showOnPage2(characterLines.join("<br>"));
     return characterLines;

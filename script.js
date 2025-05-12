@@ -74,148 +74,132 @@ async function init() {
       addNewScript();
    }
 
-   console.log("Saved scripts:", savedScriptNames);
    showSavedScripts();
-    document.getElementById('input').addEventListener("change", () => {
-        SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
-    });
+   document.getElementById('input').addEventListener("change", () => {
+      SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
+   });
 }
 
 function main(arg, splitter) {
-    let input = arg;
-    let string = input;
-    if (string.length < 1) return;
-    let words = string.split(splitter);
- 
-    let pos = 0;
-    let hideWordEvery = document.querySelector("#skip-distance").value || 2;
-    let htmlOutput = "";
-    for (let word of words) {
-       pos++;
-       // skips if just whitespace
-       if (word.trim() === "") continue;
-       if (pos % hideWordEvery == 0) {
-          let endingPunctuation = "";
-          if (word.at(-1) == "." || word.at(-1) == ",") {
-             endingPunctuation = word.at(-1);
-             word = word.substring(0, word.length - 1);
-          }
-          htmlOutput += `<span class="hidden" onclick="toggleShow(this)">${word}</span>${endingPunctuation} `;
-       }
-       else {
-          htmlOutput += word + " ";
-       }
-    }
- 
-    document.querySelector(".output").innerHTML = htmlOutput;
-    hideScriptEditor();
- 
- 
-    SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
-    return htmlOutput;
- 
- }
- 
+   let input = arg;
+   let string = input;
+   if (string.length < 1) return;
+   let words = string.split(splitter);
+
+   let pos = 0;
+   let hideWordEvery = document.querySelector("#skip-distance").value || 2;
+   let htmlOutput = "";
+   for (let word of words) {
+      pos++;
+      // skips if just whitespace
+      if (word.trim() === "") continue;
+      if (pos % hideWordEvery == 0) {
+         let endingPunctuation = "";
+         if (word.at(-1) == "." || word.at(-1) == ",") {
+            endingPunctuation = word.at(-1);
+            word = word.substring(0, word.length - 1);
+         }
+         htmlOutput += `<span class="hidden" onclick="this.classList.remove('hidden')">${word}</span>${endingPunctuation} `;
+      }
+      else {
+         htmlOutput += word + " ";
+      }
+   }
+
+   document.querySelector(".output").innerHTML = htmlOutput;
+
+   SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
+   return htmlOutput;
+}
+
 
 function parseText(raw) {
-    // Split on newlines (preserves empty lines)
-    const lines = raw.split('\n');
-    let characters = [];
-    const characterLines = [];
-    let currentCharacter = null;
-    let currentLine = "";
+   // Split on newlines (preserves empty lines)
+   const lines = raw.split('\n');
+   let characters = [];
+   const characterLines = [];
+   let currentCharacter = null;
+   let currentLine = "";
 
-    for (const rawLine of lines) {
-        const line = rawLine.trim();
-        if (!line) continue;  // skip blank lines
+   for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) continue;  // skip blank lines
 
-        // Detect a line that's ALL UPPERCASE (with optional trailing colon)
-        const cueMatch = line.match(/^([A-Z][A-Z0-9\s]*):?$/);
-        if (cueMatch) {
-            // flush previous block
-            if (currentCharacter && currentLine) {
-                characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
-            }
-            // start new character
-            currentCharacter = cueMatch[1];
-            currentLine = "";
-            if (!characters.includes(currentCharacter)) {
-               characters.push(currentCharacter);
-            }
-        }else if (currentCharacter) {
-            currentLine += line + " ";
-         }  
-        
-        
-    }
+      // Detect a line that's ALL UPPERCASE (with optional trailing colon)
+      const cueMatch = line.match(/^([A-Z][A-Z0-9\s]*):?$/);
+      if (cueMatch) {
+         // flush previous block
+         if (currentCharacter && currentLine) {
+            characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
+         }
+         // start new character
+         currentCharacter = cueMatch[1];
+         currentLine = "";
+         if (!characters.includes(currentCharacter)) {
+            characters.push(currentCharacter);
+         }
+      } else if (currentCharacter) {
+         currentLine += line + " ";
+      }
 
-    // final flush
-    if (currentCharacter && currentLine) {
-        characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
-    }
-    // join however you like; here we use <br> for HTML display
 
-    let mainCharacter = document.getElementById("character-dropdown").value;
-    let htmlOutput = "";
-    
-    for(let i = 0; i < characterLines.length; i++){
-        if(characterLines[i].includes(mainCharacter)){
-            let str = characterLines[i].slice(mainCharacter.length+1, characterLines[i].length);
-            htmlOutput += mainCharacter + ": " + main(str," ") + `<br>`;
-        } else {
-            htmlOutput += characterLines[i] + `<br>`;
-        }
-    }
-    showOnPage2(htmlOutput);
+   }
+
+   // final flush
+   if (currentCharacter && currentLine) {
+      characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
+   }
+   // join however you like; here we use <br> for HTML display
+
+   let mainCharacter = document.getElementById("character-dropdown").value;
+   let htmlOutput = "";
+
+   for (let i = 0; i < characterLines.length; i++) {
+      if (characterLines[i].includes(mainCharacter)) {
+         let str = characterLines[i].slice(mainCharacter.length + 1, characterLines[i].length);
+         htmlOutput += mainCharacter + ": " + main(str, " ") + `<br>`;
+      } else {
+         htmlOutput += characterLines[i] + `<br>`;
+      }
+   }
+   showOnPage2(htmlOutput);
 }
-function parseForCharacter(){
-    
-    console.log("run");
-    let text = document.querySelector("#input").value;
-    let words = text.split("\n");
-    let characters = [];
-    let isNew = true;
-    let regex = /^([A-Z][A-Z0-9\s]*?):?$/;
-    for(let word of words){
-        if(regex.test(word)){
-            for(let character of characters){
-                if(word === character){
-                    console.log("duplicate");
-                    isNew = false;
-                }
+function parseForCharacter() {
+   let text = document.querySelector("#input").value;
+   let words = text.split("\n");
+   let characters = [];
+   let isNew = true;
+   let regex = /^([A-Z][A-Z0-9\s]*?):?$/;
+   for (let word of words) {
+      if (regex.test(word)) {
+         for (let character of characters) {
+            if (word === character) {
+               isNew = false;
             }
-            if(isNew){
-                characters.push(word);
-            }
-            isNew = true;
-        }
-    }
-    
-    console.log(characters);
-    removeOptions(document.getElementById("character-dropdown"));
-    for(let character of characters){
-        document.getElementById("character-dropdown").add(new Option(character,character))
-    }
-    
-        console.log(characters);
+         }
+         if (isNew) {
+            characters.push(word);
+         }
+         isNew = true;
+      }
+   }
+
+   removeOptions(document.getElementById("character-dropdown"));
+   for (let character of characters) {
+      document.getElementById("character-dropdown").add(new Option(character, character))
+   }
 }
 function removeOptions(selectElement) {
-    let i, L = selectElement.options.length - 1;
-    for(i = L; i >= 0; i--) {
-       selectElement.remove(i);
-    }
- }
- 
- 
-
-
-
-
+   let i, L = selectElement.options.length - 1;
+   for (i = L; i >= 0; i--) {
+      selectElement.remove(i);
+   }
+}
 
 
 // when called, function will take in the name of the script then display it in the output
 function showOnPage(id, name, raw) {
-    activeScript = { id, name };
+   activeScript = { id, name };
    let htmlOutput = "";
    document.querySelector(".output").innerHTML = "";
    document.getElementById("input").value = raw;
@@ -246,8 +230,8 @@ function showSavedScripts() {
       if (!a.pinned && b.pinned) return 1;
       return a.name.localeCompare(b.name);
    });
-   
-   sortedScripts.forEach(({ id, name, pinned }) => {  
+
+   sortedScripts.forEach(({ id, name, pinned }) => {
       if (name === "+ new script") return;
       let newScript = document.createElement("li");
       let label = document.createElement("span");
@@ -289,7 +273,6 @@ function showSavedScripts() {
 
       if (id == activeScript.id) newScript.classList.add("active");
       newScript.addEventListener("click", () => {
-         console.log("clicked ", name, id);
          showOnPage(id, name, SaveManager.getScript(id).raw);
          document.querySelector(".active")?.classList.remove("active");
          newScript.classList.add("active");
@@ -340,8 +323,7 @@ function toggleScriptEditor() {
    else hideScriptEditor();
 }
 
-function showScriptEditor() 
-{
+function showScriptEditor() {
    document.querySelector("#input").style.height = "15rem";
    document.querySelector("#input").style.opacity = "1";
    document.querySelector("#input").style.pointerEvents = "auto";
@@ -353,7 +335,7 @@ function hideScriptEditor() {
    document.querySelector("#input").style.pointerEvents = "none";
 }
 
-function changeName(){
+function changeName() {
    let name = prompt("What would you like to rename your script to?");
    if (!name) return;
 
@@ -369,7 +351,7 @@ function changeName(){
 
    const script = savedScriptNames.find(s => s.id === activeScript.id);
    if (script) script.name = name;
-   
+
    SaveManager.saveScript(activeScript.id, name, document.getElementById("input").value);
    showSavedScripts();
 }
@@ -393,21 +375,21 @@ function removeScript() {
       let first = savedScriptNames[0];
       showOnPage(first.id, first.name, SaveManager.getScript(first.id).raw);
    } else {
-      addNewScript(); 
+      addNewScript();
    }
    showSavedScripts();
 }
 
-function addDropdownCharacters(characters){
+function addDropdownCharacters(characters) {
    const dropdown = document.getElementById("character-dropdown");
-    dropdown.innerHTML = '<option value="">Select a character</option>';
+   dropdown.innerHTML = '<option value="">Select a character</option>';
 
-    characters.forEach(character => {
-        const option = document.createElement("option");
-        option.value = character;
-        option.textContent = character;
-        dropdown.appendChild(option);
-    });
+   characters.forEach(character => {
+      const option = document.createElement("option");
+      option.value = character;
+      option.textContent = character;
+      dropdown.appendChild(option);
+   });
 }
 
 function togglePin(scriptId) {
@@ -419,5 +401,5 @@ function togglePin(scriptId) {
    }
 }
 document.querySelector("#input").addEventListener("input", () => {
-    parseForCharacter();
+   parseForCharacter();
 });

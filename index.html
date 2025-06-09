@@ -6,42 +6,40 @@
    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+   <!-- div for sidebar -->
    <div class="sidebar">
-      <h1>Saved scripts</h1>
+      <h1 class = "scriptDescription">Saved Scripts</h1>
       <ul class="saved-scripts">
+         <h2>Pinned Scripts</h2>
          <li class="new-script" onclick="addNewScript()"> + new script</li>
       </ul>
    </div>
-   <div class="content">
-      <h2>Script name</h2>
-      <div class="input-parent">
-         <button onclick="toggleScriptEditor()">Show/hide script editor</button>
-         <textarea name="input" id="input" cols="50" rows="10" placeholder="paste your script here"></textarea>
-      </div>
-      <div class="settings">
-         <br>
-         <p for="skip-distance">skip word every <input id="skip-distance" type="number" value="2" min="0" max="20">
-            words
-         </p>
-         <!-- <p for=character">Input character for memorization </p>
-         <input id="character" type="text"><br> -->
 
-         <button onclick="main(document.querySelector('#input').value,' ')">Run</button> <!-- by word-->
-         <!-- <button onclick="main(/[\?=.?!]/)">By Sentence</button> -->
-        <button onclick="parseText(document.getElementById('input').value)">Run Lines</button>
-        <p>Select character for memorization</p>
-         <select id="character-dropdown">
-            <option value="">Select a character</option>    
-            
-         </select>
+   <!-- div for main content (entire right side) -->
+   <div class="content">
+
+      <div class="header">
+         <h2 id = "scriptName">Script Name</h2>
+         <button id = "settings" onclick = "openSettings()">⚙️</button>
+      </div>
+      <br>
+      <div class = "settingsPanel">
+            <h2 class = "settingsHeading">Settings:</h2>
+            <button onclick = "closeSettings()" class="closeButton" aria-label="Close settings">✕</button>
+            <button id="hideButton" onclick="toggle()">Show All Hidden Words</button>
+            <p id="skipSetting" for="skip-distance">Skip word every <input id="skip-distance" type="number" value="2" min="0" max="20">words</p>
+            <p id = "characterSetting">Hide Lines: <select id="character-dropdown"><option value="">ALL CHARACTERS</option></select></p>
+      </div>
+
+      <br>
+      <button onclick="parseText(document.getElementById('input').value)">Run</button> 
+      <button onclick="toggleScriptEditor()" id = "scriptButton">Hide Script Editor</button>
+      <div class="input-parent">
          
-      
-         <br><br>
+         <textarea name="input" id="input" cols="50" rows="10" placeholder="Paste your script here."></textarea>
       </div>
       <div class="output-parent">
          <p class="output" id="output"></p>
-         <button onclick="showAll()">Show all</button>
-         <button onclick="hideAll()">Hide all</button>
       </div>
    </div>
    <script src="./script.js"></script>

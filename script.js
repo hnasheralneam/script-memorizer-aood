@@ -80,40 +80,71 @@ async function init() {
    });
 }
 
+
 function main(arg, splitter) {
+   hideScriptEditor();
+   document.getElementById("scriptButton").innerHTML = "Show Script Editor";
+   
    let input = arg;
    let string = input;
    if (string.length < 1) return;
-   let words = string.split(splitter);
 
+   let words = string.split(splitter);
    let pos = 0;
    let hideWordEvery = document.querySelector("#skip-distance").value || 2;
    let htmlOutput = "";
+
    for (let word of words) {
-      pos++;
-      // skips if just whitespace
+      // skip if just whitespace
       if (word.trim() === "") continue;
+
+      // check if word is inside parentheses
+      const isParenthetical = word.trim().startsWith("(") && word.trim().endsWith(")");
+
+      // always show parentheticals
+      if (isParenthetical) {
+         htmlOutput += word + " ";
+         continue; 
+      }
+
+      pos++;
+
       if (pos % hideWordEvery == 0) {
          let endingPunctuation = "";
          if (word.at(-1) == "." || word.at(-1) == ",") {
             endingPunctuation = word.at(-1);
             word = word.substring(0, word.length - 1);
          }
-         htmlOutput += `<span class="hidden" onclick="this.classList.remove('hidden')">${word}</span>${endingPunctuation} `;
-      }
-      else {
+         htmlOutput += `<span class="hidden" onclick="hiddenWords(this)">${word}</span>${endingPunctuation} `;
+      } else {
          htmlOutput += word + " ";
       }
    }
-
    document.querySelector(".output").innerHTML = htmlOutput;
-
    SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
    return htmlOutput;
 }
 
+function hiddenWords(element) {
+   if (element.classList.contains("shown")) {
+      element.classList.remove("shown");
+      element.classList.add("hidden");
+   } else if (element.classList.contains("hidden")) {
+      element.classList.remove("hidden");
+      element.classList.add("shown");
+   }
+}
+
 
 function parseText(raw) {
+   let dropdown = document.getElementById("character-dropdown");
+   console.log(dropdown.value);
+   let option = true;
+   if(document.getElementById("character-dropdown").value==="All Characters"){
+      option = false;
+   }
+
+   console.log("option: " + option);
    // Split on newlines (preserves empty lines)
    const lines = raw.split('\n');
    let characters = [];
@@ -149,21 +180,33 @@ function parseText(raw) {
    if (currentCharacter && currentLine) {
       characterLines.push(`${currentCharacter}: ${currentLine.trim()}`);
    }
-   // join however you like; here we use <br> for HTML display
 
-   let mainCharacter = document.getElementById("character-dropdown").value;
    let htmlOutput = "";
+   if(option){
+      console.log("option is true");
+      let mainCharacter = document.getElementById("character-dropdown").value;
+      htmlOutput = "";
 
-   for (let i = 0; i < characterLines.length; i++) {
-      if (characterLines[i].includes(mainCharacter)) {
-         let str = characterLines[i].slice(mainCharacter.length + 1, characterLines[i].length);
-         htmlOutput += mainCharacter + ": " + main(str, " ") + `<br>`;
-      } else {
-         htmlOutput += characterLines[i] + `<br>`;
+      for (let i = 0; i < characterLines.length; i++) {
+         if (characterLines[i].includes(mainCharacter)) {
+            let str = characterLines[i].slice(mainCharacter.length + 1, characterLines[i].length);
+            htmlOutput += mainCharacter + ": " + main(str, " ") + `<br>`;
+         } else {
+            htmlOutput += characterLines[i] + `<br>`;
+         }
+      }
+   } else {
+      htmlOutput = "";
+      for (let i = 0; i < characterLines.length; i++) {
+         let str = characterLines[i].slice(characterLines[i].indexOf(":") + 1, characterLines[i].length);
+         htmlOutput += characterLines[i].slice(0, characterLines[i].indexOf(":") + 1) + main(str, " ") + `<br>`;
       }
    }
    showOnPage2(htmlOutput);
+   document.getElementById("scriptButton").innerHTML = "Show Script Editor";
 }
+
+//populates the dropdown with characters
 function parseForCharacter() {
    let text = document.querySelector("#input").value;
    let words = text.split("\n");
@@ -188,7 +231,13 @@ function parseForCharacter() {
    for (let character of characters) {
       document.getElementById("character-dropdown").add(new Option(character, character))
    }
+   let allOption = document.createElement("option");
+   allOption.value = "All Characters";
+   allOption.textContent = "ALL CHARACTERS";
+   document.getElementById("character-dropdown").add(allOption);
 }
+
+//removes all options from the dropdown
 function removeOptions(selectElement) {
    let i, L = selectElement.options.length - 1;
    for (i = L; i >= 0; i--) {
@@ -204,6 +253,8 @@ function showOnPage(id, name, raw) {
    document.querySelector(".output").innerHTML = "";
    document.getElementById("input").value = raw;
    showScriptEditor();
+   parseForCharacter();
+   document.getElementById("scriptName").textContent = name;
 }
 
 function showOnPage2(script) {
@@ -213,6 +264,7 @@ function showOnPage2(script) {
 
 //creates new sidebar with the new script
 function showSavedScripts() {
+   
    //clears the sidebar
    let list = document.querySelector(".saved-scripts");
    list.innerHTML = "";
@@ -224,52 +276,116 @@ function showSavedScripts() {
    addScriptButton.textContent = " + new script";
    list.appendChild(addScriptButton);
    //let newScript = document.createElement("li");
-
+   
+   //checks for pinned scripts and adds them to the top
    const sortedScripts = [...savedScriptNames].sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
       return a.name.localeCompare(b.name);
    });
 
-   sortedScripts.forEach(({ id, name, pinned }) => {
-      if (name === "+ new script") return;
+   let pinned = document.createElement("h2")
+   pinned.textContent = "Pinned Scripts";
+   list.appendChild(document.createElement("br"));
+   list.appendChild(pinned);
+   list.appendChild(document.createElement("hr"));
+   let pinnedScripts = sortedScripts.filter(script => script.pinned);
+   let unpinnedScripts = sortedScripts.filter(script => !script.pinned);
+
+   newScript(pinnedScripts, list);
+
+   list.appendChild(document.createElement("br"));
+   let unpinned = document.createElement("h2")
+   unpinned.textContent = "Unpinned Scripts";
+   list.appendChild(unpinned);
+   list.appendChild(document.createElement("hr"));
+   
+   newScript(unpinnedScripts, list);
+
+}
+
+function newScript(array, list){
+   console.log("please work")
+   array.forEach(({ id, name, pinned }) => {
       let newScript = document.createElement("li");
       let label = document.createElement("span");
+      //creates the settings button
+      let settingsBtn = document.createElement("div");
+      settingsBtn.classList.add("btn-settings");
+      settingsBtn.textContent = "⚙️";
+      settingsBtn.title = "Script settings";
+
+      settingsBtn.addEventListener("mouseover", (e) => {
+         console.log("Mouse over settings button");
+         e.stopPropagation();
+         document.querySelector(".settings-menu")?.remove();
+
+         let menu = document.createElement("div");
+         menu.classList.add("settings-menu");
+
+         let renameBtn = document.createElement("button");
+         renameBtn.textContent = "Rename";
+         renameBtn.title = "Rename script";
+         renameBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            activeScript = { id, name };
+            changeName();
+            menu.remove();
+         });
+
+         let deleteBtn = document.createElement("button");
+         deleteBtn.textContent = "🗑️";
+         deleteBtn.title = "Delete script";
+         deleteBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            activeScript = { id, name };
+            removeScript();
+            menu.remove();
+         });
+
+         let pinBtn = document.createElement("button");
+         pinBtn.textContent = pinned ? "❤️" : "🤍";
+         pinBtn.title = pinned ? "Unpin script" : "Pin script";
+         pinBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            togglePin(id);
+            menu.remove();
+         });
+
+         menu.appendChild(renameBtn);
+         menu.appendChild(deleteBtn);
+         menu.appendChild(pinBtn);
+         document.body.appendChild(menu);
+
+         const rect = e.target.getBoundingClientRect();
+         menu.style.top = `${rect.top + window.scrollY}px`;
+         menu.style.left = `${rect.right + 6 + window.scrollX}px`;
+
+         menu.addEventListener("mouseleave", () => {
+            menu.remove();
+         });
+
+         
+      });
+     
+
+      if (name === "+ new script") return;
       label.textContent = name;
       label.classList.add("script-label");
+      let scriptItemContent = document.createElement("div");
+      scriptItemContent.classList.add("script-item-content");
+      scriptItemContent.appendChild(label);
+      scriptItemContent.appendChild(settingsBtn);
+      newScript.appendChild(scriptItemContent);
 
-      let renameBtn = document.createElement("button");
-      renameBtn.classList.add("btn-rename");
-      renameBtn.textContent = "Rename";
-      renameBtn.title = "Rename script";
-      renameBtn.addEventListener("click", (e) => {
-         e.stopPropagation();
-         activeScript = { id, name };
-         changeName();
-      });
-
-      let deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "🗑️";
-      deleteBtn.classList.add("btn-delete");
-      deleteBtn.title = "Delete script";
-      deleteBtn.addEventListener("click", (e) => {
-         e.stopPropagation();
-         activeScript = { id, name };
-         removeScript();
-      });
-
-      let pinBtn = document.createElement("button");
-      pinBtn.textContent = pinned ? "❤️" : "🤍";
-      pinBtn.title = pinned ? "Unpin script" : "Pin script";
-      pinBtn.addEventListener("click", (e) => {
-         e.stopPropagation();
-         togglePin(id);
-      });
-
+      /*
       newScript.appendChild(pinBtn);
       newScript.appendChild(label);
       newScript.appendChild(deleteBtn);
       newScript.appendChild(renameBtn);
+      */
+
+
 
       if (id == activeScript.id) newScript.classList.add("active");
       newScript.addEventListener("click", () => {
@@ -283,7 +399,7 @@ function showSavedScripts() {
 
 //adds another label on the side
 function addNewScript() {
-   let name = prompt("What would you like to name your chat");
+   let name = prompt("What would you like to name your script");
    if (!name) return;
 
    let id = window.crypto.randomUUID();
@@ -302,6 +418,7 @@ function addNewScript() {
    SaveManager.saveScript(id, name, "");
 }
 
+// Shows all the hidden words in the script
 function showAll() {
    let hiddenWords = document.querySelectorAll(".hidden");
    for (let element of hiddenWords) {
@@ -309,6 +426,7 @@ function showAll() {
    }
 }
 
+// Hides all the shown words in the script
 function hideAll() {
    let shownWords = document.querySelectorAll(".shown");
    for (let element of shownWords) {
@@ -317,24 +435,45 @@ function hideAll() {
 }
 //Shows the script editor after it has disappeared
 function toggleScriptEditor() {
-   if (document.querySelector("#input").style.height == "2rem") {
+   let scriptButton = document.getElementById("scriptButton");
+   if (scriptButton.innerHTML === "Show Script Editor") {
       showScriptEditor();
-   }
-   else hideScriptEditor();
+      scriptButton.innerHTML = "Hide Script Editor";
+   } else if(scriptButton.innerHTML === "Hide Script Editor") {
+      hideScriptEditor();
+      scriptButton.innerHTML = "Show Script Editor";
+   } 
 }
 
+// Shows the script editor when the button is clicked
 function showScriptEditor() {
    document.querySelector("#input").style.height = "15rem";
    document.querySelector("#input").style.opacity = "1";
    document.querySelector("#input").style.pointerEvents = "auto";
 }
 
+
+// Hides the script editor when the button is clicked
 function hideScriptEditor() {
    document.querySelector("#input").style.height = "2rem";
    document.querySelector("#input").style.opacity = "0";
    document.querySelector("#input").style.pointerEvents = "none";
 }
 
+// Toggles the visibility of all hidden words in the script
+function toggle(){
+   buttonName = document.getElementById("hideButton");
+   console.log(buttonName.innerHTML);
+   if(buttonName.innerHTML === "Hide All Hidden Words") {
+      buttonName.innerHTML = "Show All Hidden Words";
+      hideAll();
+   } else if(buttonName.innerHTML === "Show All Hidden Words") {
+      showAll();
+      buttonName.innerHTML = "Hide All Hidden Words";
+   }
+}
+
+// Changes the name of the script when the button is clicked
 function changeName() {
    let name = prompt("What would you like to rename your script to?");
    if (!name) return;
@@ -356,6 +495,8 @@ function changeName() {
    showSavedScripts();
 }
 
+
+// Removes the script from the sidebar and local storage
 function removeScript() {
    if (!confirm("Are you sure you want to delete this script?")) return;
 
@@ -380,18 +521,31 @@ function removeScript() {
    showSavedScripts();
 }
 
-function addDropdownCharacters(characters) {
-   const dropdown = document.getElementById("character-dropdown");
-   dropdown.innerHTML = '<option value="">Select a character</option>';
 
-   characters.forEach(character => {
-      const option = document.createElement("option");
-      option.value = character;
-      option.textContent = character;
-      dropdown.appendChild(option);
-   });
-}
+// //NOT USED ??
+// function addDropdownCharacters(characters) {
+//    console.log("RAN");
+//    const dropdown = document.getElementById("character-dropdown");
+//    dropdown.innerHTML = '<option value="">Select a character</option>';
+//    let allOption = document.createElement("option");
+//    allOption.value = "All Characters";
+//    allOption.textContent = "ALL CHARACTERS";
+//    dropdown.appendChild(allOption)
+//    characters.forEach(character => {
+//       const option = document.createElement("option");
+//       option.value = character;
+//       option.textContent = character;
+//       dropdown.appendChild(option);
+//    });
 
+//    console.log("options in dropdown:");
+//    for(let i = 0; i < dropdown.options.length; i++) {
+//       console.log(dropdown.options[i].value);
+//    }
+// }
+
+
+// Toggles pinning of a script in the sidebar
 function togglePin(scriptId) {
    const script = savedScriptNames.find(s => s.id === scriptId);
    if (script) {
@@ -400,6 +554,24 @@ function togglePin(scriptId) {
       showSavedScripts();
    }
 }
+
 document.querySelector("#input").addEventListener("input", () => {
    parseForCharacter();
 });
+
+
+// Opens the settings panel
+function openSettings() {
+   document.querySelector(".settingsPanel").style.display = "flex";
+   document.querySelector(".settingsPanel").style.opacity = "1";
+   document.querySelector(".settingsPanel").style.pointerEvents = "auto";
+   document.querySelector(".settingsPanel").style.height = "5vh";
+}
+
+
+// Closes the settings panel
+function closeSettings() {
+   document.querySelector(".settingsPanel").style.display = "none";
+   document.querySelector(".settingsPanel").style.opacity = "0";
+   document.querySelector(".settingsPanel").style.pointerEvents = "none";
+}

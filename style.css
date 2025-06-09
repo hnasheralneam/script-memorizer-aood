@@ -1,96 +1,106 @@
 :root {
-   --theme-color: #ff3b21;
+   --background: #e3f3ff;
+   --background-dark: #cae8ff;
+   --main: #4098D7;
+   --accent: #e9b7f0;
+   --accent-light: #eed5f1;
+   --main-dark: #3682BB;
+   --font-color: rgb(16, 16, 102);
 }
 
+/* literally everything */
 * {
    padding: 0;
    margin: 0;
-   font-family: sans-serif;
+   font-family: 'Times New Roman', Times, serif;
 }
 
+/* entire website */
 body {
    display: grid;
    grid-template-columns: 18rem auto;
-   background-color: #fff;
+   background-color: var(--background);
 }
 
+/* div box for entire sidebar */
 .sidebar {
-   background-color: #eee;
+   background-color: var(--background);
    height: 100vh;
    overflow-y: scroll;
    border-radius: 0 1rem 1rem 0;
 }
 
+/* div box for entire right side */
 .content {
    margin: .5rem 1rem;
 }
 
-
+/* div box for entire sidebar except for the heading */
 .saved-scripts {
    margin: 0 1rem;
    list-style-type: none;
 }
 
-.saved-scripts li button {
-   display: none;
-}
-
-.saved-scripts li:hover button {
-   display: inline;
-}
-
+/* all the scripts in the sidebar */
 .saved-scripts li {
    display: block;
    background-color: #fff;
    border-radius: .5rem;
    margin: .5rem 0;
-   padding: .6rem;
+   overflow: hidden;
+   padding: 0.7rem;
+   color: var(--font-color);
 }
 
+/* the script that is active on the sidebar */
 li.active {
-   background-color: var(--theme-color);
-   color: #fff;
+   background-color: var(--accent);
 }
 
+/* add new script button */
 .saved-scripts li.new-script {
    text-align: center;
-   color: #fff;
-   background-color: var(--theme-color);
+   background-color: var(--accent);
+   color: var(--font-color);
 }
-
 
 p {
    line-height: 2rem;
+   color: var(--font-color);
 }
 
-
+/* CHANGE */
+/* words that are hidden */
 .hidden {
-   color: #eee;
-   background-color: #eee;
+   background-color: var(--accent-light);
    transition: .2s;
    margin: 0 0;
    padding: .15rem .3rem;
    border-radius: .4rem;
+   color: var(--accent-light)
 }
 
+/* hidden words when you hover */
 .hidden:hover {
-   color: #fff;
-   background-color: #45d965;
+   background-color: var(--accent);
+   color: var(--font-color);
 }
 
+/* words when they are shown */
 .shown {
-   color: #fff;
-   background-color: #45d965;
+   background-color: var(--accent);
+   border-radius: .4rem;
+   padding: .15rem .3rem;
+   color: var(--font-color);
 }
 
-
-/* input */
+/* script input */
 #input {
    box-sizing: border-box;
    display: block;
    width: 100%;
    padding: .5rem;
-   background-color: #eee;
+   background-color: var(--background-dark);
    border-radius: .4rem;
    border: none;
    font-family: serif;
@@ -98,44 +108,139 @@ p {
    height: 15rem;
 }
 
+/* div box for script input */
 .input-parent {
    position: relative;
-   padding: .2rem 1rem;
 }
 
-.input-parent button {
-   position: absolute;
-   left: 1.2rem;
-   bottom: .4rem;
-}
-
-
-/* other */
+/* All the buttons in general */
 button {
    border: none;
-   background-color: #888;
-   color: #fff;
+   background-color: var(--main);
+   color: var(--text-on-dark);
    text-shadow: 0 0 .1rem #222;
    padding: .3rem .5rem;
    border-radius: .3rem;
    font-size: .9rem;
    transition: .15s;
+   color: var(--font-color);
 }
 
+/* buttons for when you hover over it */
 button:hover {
-   background-color: #777;
+   background-color: var(--main-dark);
 }
 
+/* note sure */
 button:active {
-   background-color: #666;
+   background-color: pink;
 }
 
-.btn-rename,
-.btn-delete {
-   float: right;
+/* div box for the settings in the sidebar */
+.settings-menu {
+   position: absolute;
+   background: var(--background);
+   border: 1px solid #ccc;
+   border-radius: 6px;
+   padding: 6px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+   z-index: 100;
 }
 
-#changeButton {
-   top: 0.4rem;
-   left: 1.2rem;
+/* buttons for the settings in the sidebar */
+.settings-menu button {
+   display: block;
+   width: 100%;
+   margin: 4px 0;
+}
+
+/* div box for both the settings button and the label in the sidebar */
+.script-item-content {
+   position: relative;
+   padding-right: 2.5rem;
+}
+
+/* cog emoji for the scripts */
+.btn-settings {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* div box for the settings */
+.settingsPanel {
+   background-color: var(--background-dark);
+   padding-top: 2vh;
+   padding-bottom: 2vh;
+   border-radius: 0.5rem;
+   padding-left: 2vw;
+   padding-right: 4vw;
+   display: flex;
+   gap: 7vw;
+   align-items: center;
+   height: 5vh;
+}
+
+/* words for skip every nth word */
+#skipSetting {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+/* skip every nth word input box */
+input[type="number"],
+select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  min-width: 60px;
+}
+
+/* settings button next to script name (the cog emoji) */
+#settings {
+   background-color: var(--background);
+   font-size: 1.2rem;
+   padding: 0.1rem;
+}
+
+/* script name and settings button */
+.header {
+   display: flex;
+   color: var(--font-color);
+}
+
+/* close button on settings panel */
+.closeButton {
+   position: absolute;
+   top: 8vh;
+   right: 1.5vw;
+   background: white;
+   border: none;
+   border-radius: 50%;
+   width: 32px;
+   height: 32px;
+   font-size: 18px;
+   cursor: pointer;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* script name at the top */
+#scriptName {
+   font-size: 5vh;
+   font-weight: bold;
+   margin-bottom: 1rem;
+   color: var(--font-color);
+}
+
+h2 {
+   color: var(--font-color);
+}
+
+/* Saved Scripts at the top */
+.scriptDescription {
+   color: var(--font-color);
 }

@@ -8,8 +8,8 @@ Supervising Teacher:
 Michael Hobson
 
 Created by: 
-Hamza Nasher-Alneam
-Winnie Wiriyacoonkasem
-Irene Park
-Hannah Ayers
+Hamza Nasher-Alneam,
+Winnie Wiriyacoonkasem,
+Irene Park,
+Hannah Ayers,
 Arunabh Ramesh

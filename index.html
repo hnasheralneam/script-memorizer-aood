@@ -11,7 +11,7 @@
       <h1 class = "scriptDescription">Saved Scripts</h1>
       <ul class="saved-scripts">
          <h2>Pinned Scripts</h2>
-         <li class="new-script" onclick="addNewScript()"> + new script</li>
+         <li class="new-script" onclick="addNewScript()"> + New Script</li>
       </ul>
    </div>
 
@@ -20,23 +20,28 @@
 
       <div class="header">
          <h2 id = "scriptName">Script Name</h2>
-         <button id = "settings" onclick = "openSettings()">⚙️</button>
       </div>
       <br>
       <div class = "settingsPanel">
-            <h2 class = "settingsHeading">Settings:</h2>
             <button onclick = "closeSettings()" class="closeButton" aria-label="Close settings">✕</button>
+            <h2 class = "settingsHeading">Settings:</h2>
             <button id="hideButton" onclick="toggle()">Show All Hidden Words</button>
             <p id="skipSetting" for="skip-distance">Skip word every <input id="skip-distance" type="number" value="2" min="0" max="20">words</p>
             <p id = "characterSetting">Hide Lines: <select id="character-dropdown"><option value="">ALL CHARACTERS</option></select></p>
       </div>
 
       <br>
-      <button onclick="parseText(document.getElementById('input').value)">Run</button> 
       <button onclick="toggleScriptEditor()" id = "scriptButton">Hide Script Editor</button>
       <div class="input-parent">
          
+      <div class = inputContainer>
+         <div class = scriptRunner>
+            <button id = "settings" onclick = "toggleSettingsPanel()">⚙️</button>
+            <button id = runButton onclick="parseText(document.getElementById('input').value)">↑</button>
+            <button id = "addFile"">+</button> 
+         </div>
          <textarea name="input" id="input" cols="50" rows="10" placeholder="Paste your script here."></textarea>
+      </div>
       </div>
       <div class="output-parent">
          <p class="output" id="output"></p>

@@ -1,18 +1,19 @@
 :root {
-   --background: #e3f3ff;
-   --background-dark: #cae8ff;
-   --main: #4098D7;
-   --accent: #e9b7f0;
-   --accent-light: #eed5f1;
-   --main-dark: #3682BB;
-   --font-color: rgb(16, 16, 102);
+   --background: white;
+   --background-dark: #f0f0f0;
+   --main: #5c5c5c;
+   --accent: #d0d0d0;
+   --accent-light: #eeeeee;
+   --main-dark: #808080;
+   --font-color: rgb(53, 53, 53);
+   --text-on-dark: #f0f0f0;
 }
 
 /* literally everything */
 * {
    padding: 0;
    margin: 0;
-   font-family: 'Times New Roman', Times, serif;
+   font-family: Arial, Helvetica, sans-serif
 }
 
 /* entire website */
@@ -24,7 +25,7 @@ body {
 
 /* div box for entire sidebar */
 .sidebar {
-   background-color: var(--background);
+   background-color: #f7f7f7;
    height: 100vh;
    overflow-y: scroll;
    border-radius: 0 1rem 1rem 0;
@@ -48,7 +49,7 @@ body {
    border-radius: .5rem;
    margin: .5rem 0;
    overflow: hidden;
-   padding: 0.7rem;
+   padding: 1rem;
    color: var(--font-color);
 }
 
@@ -101,8 +102,7 @@ p {
    width: 100%;
    padding: .5rem;
    background-color: var(--background-dark);
-   border-radius: .4rem;
-   border: none;
+   border-radius: 0rem;
    font-family: serif;
    font-size: 1rem;
    height: 15rem;
@@ -123,7 +123,7 @@ button {
    border-radius: .3rem;
    font-size: .9rem;
    transition: .15s;
-   color: var(--font-color);
+   color: var(--text-on-dark);
 }
 
 /* buttons for when you hover over it */
@@ -131,10 +131,10 @@ button:hover {
    background-color: var(--main-dark);
 }
 
-/* note sure */
-button:active {
+/* when you hold down the button */
+/* button:active {
    background-color: pink;
-}
+} */
 
 /* div box for the settings in the sidebar */
 .settings-menu {
@@ -216,9 +216,9 @@ select {
 /* close button on settings panel */
 .closeButton {
    position: absolute;
-   top: 8vh;
+   top: 12vh;
    right: 1.5vw;
-   background: white;
+   background: rgb(186, 186, 186);
    border: none;
    border-radius: 50%;
    width: 32px;
@@ -243,4 +243,61 @@ h2 {
 /* Saved Scripts at the top */
 .scriptDescription {
    color: var(--font-color);
+   padding: 1rem;
+}
+
+.scriptRunner {
+   position: absolute;
+   background-color: rgb(213, 213, 213);
+   width: 100%;
+   height: 3rem;
+   top: 14.5rem;
+   border-radius: 0.5rem;
+}
+
+.scriptRunner button {
+   position: absolute;
+   color: var(--text-on-dark);
+   padding: 0.3rem 0.6rem;
+   border-radius: 2rem;
+   font-size: 1.5rem;
+   cursor: pointer;
+   height: 2.5rem;
+   width: 2.5rem;
+}
+
+#runButton {
+   top: 0.3rem;
+   left: 72rem;
+   background-color: var(--main);
+   font-size: 1.2rem;
+}
+
+#settings {
+   top: 0.3rem;
+   left: 69rem;
+   background-color: var(--main);
+}
+
+#addFile{
+   top: 0.3rem;
+   left: 0.5rem;
+   background-color: var(--main);
+}
+
+.infoBox {
+   position: absolute;
+   background-color: white;
+   border-radius: 0.5rem;
+   font-size: 0.8rem;
+   text-align: center;
+   padding: 0.5rem;
+   border: 1px solid #ccc;
+}
+
+.output {
+   padding: 1rem;
+   background-color: #f2f2f2;
+   border-radius : 0.5rem;
+   padding-top: 3rem;
 }

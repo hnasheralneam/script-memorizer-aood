@@ -78,7 +78,48 @@ async function init() {
    document.getElementById('input').addEventListener("change", () => {
       SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
    });
+
+   buttonInfo(document.getElementById("runButton"), "Run Script");
+   buttonInfo(document.getElementById("settings"), "More Settings")
+   buttonInfo(document.getElementById("addFile"), "Add script file (TO BE IMPLEMENTED)");
+
+   if(document.querySelector(".output").innerHTML === "") {
+      document.querySelector(".output").backgroundColor = "white";
+   }else {
+      document.querySelector(".output").backgroundColor = "#f2f2f2";
+   }
+
 }
+
+// provides information on different buttons when hovered over
+function buttonInfo(element, message) {
+   element.addEventListener("mouseover", (event) => {
+      event.stopPropagation();
+      document.querySelector(".infoBox")?.remove();
+
+      const info = document.createElement("div");
+      info.classList.add("infoBox");
+      info.textContent = message;
+      document.body.appendChild(info);
+
+      const rect = element.getBoundingClientRect();
+      const infoRect = info.getBoundingClientRect(); 
+
+      info.style.position = "absolute";
+      info.style.top = `${rect.bottom + window.scrollY + 6}px`;
+      info.style.left = `${rect.left + window.scrollX + (rect.width / 2) - (info.offsetWidth / 2)}px`;
+
+      function removeTooltip() {
+         info.remove();
+         element.removeEventListener("mouseleave", removeTooltip);
+         info.removeEventListener("mouseleave", removeTooltip);
+      }
+
+      element.addEventListener("mouseleave", removeTooltip);
+      info.addEventListener("mouseleave", removeTooltip);
+   });
+}
+
 
 
 function main(arg, splitter) {
@@ -273,7 +314,7 @@ function showSavedScripts() {
    let addScriptButton = document.createElement("li");
    addScriptButton.classList.add("new-script");
    addScriptButton.addEventListener("click", addNewScript);
-   addScriptButton.textContent = " + new script";
+   addScriptButton.textContent = " + New Script";
    list.appendChild(addScriptButton);
    //let newScript = document.createElement("li");
    
@@ -447,17 +488,17 @@ function toggleScriptEditor() {
 
 // Shows the script editor when the button is clicked
 function showScriptEditor() {
-   document.querySelector("#input").style.height = "15rem";
-   document.querySelector("#input").style.opacity = "1";
-   document.querySelector("#input").style.pointerEvents = "auto";
+   document.querySelector(".inputContainer").style.height = "15rem";
+   document.querySelector(".inputContainer").style.opacity = "1";
+   document.querySelector(".inputContainer").style.pointerEvents = "auto";
 }
 
 
 // Hides the script editor when the button is clicked
 function hideScriptEditor() {
-   document.querySelector("#input").style.height = "2rem";
-   document.querySelector("#input").style.opacity = "0";
-   document.querySelector("#input").style.pointerEvents = "none";
+   document.querySelector(".inputContainer").style.height = "2rem";
+   document.querySelector(".inputContainer").style.opacity = "0";
+   document.querySelector(".inputContainer").style.pointerEvents = "none";
 }
 
 // Toggles the visibility of all hidden words in the script
@@ -574,4 +615,13 @@ function closeSettings() {
    document.querySelector(".settingsPanel").style.display = "none";
    document.querySelector(".settingsPanel").style.opacity = "0";
    document.querySelector(".settingsPanel").style.pointerEvents = "none";
+}
+
+function toggleSettingsPanel(){
+   let settingsPanel = document.querySelector(".settingsPanel");
+   if (settingsPanel.style.display === "none" || settingsPanel.style.display === "") {
+      openSettings();
+   } else {
+      closeSettings();
+   }
 }

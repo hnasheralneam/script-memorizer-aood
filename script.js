@@ -80,14 +80,11 @@ async function init() {
    });
 
    buttonInfo(document.getElementById("runButton"), "Run Script");
-   buttonInfo(document.getElementById("settings"), "More Settings")
+   buttonInfo(document.getElementById("settings"), "More Settings");
+   buttonInfo(document.getElementById("scriptButton"), "Show/Hide Script Editor");
    buttonInfo(document.getElementById("addFile"), "Add script file (TO BE IMPLEMENTED)");
 
-   if(document.querySelector(".output").innerHTML === "") {
-      document.querySelector(".output").backgroundColor = "white";
-   }else {
-      document.querySelector(".output").backgroundColor = "#f2f2f2";
-   }
+
 
 }
 
@@ -476,14 +473,18 @@ function hideAll() {
 }
 //Shows the script editor after it has disappeared
 function toggleScriptEditor() {
-   let scriptButton = document.getElementById("scriptButton");
-   if (scriptButton.innerHTML === "Show Script Editor") {
+   let scriptButton = document.getElementById("imageButton");
+   if (scriptButton.title === "Show Script Editor") {
       showScriptEditor();
+      scriptButton.title = "Hide Script Editor";
       scriptButton.innerHTML = "Hide Script Editor";
-   } else if(scriptButton.innerHTML === "Hide Script Editor") {
+      scriptButton.src = "images/eyeOpen.png";
+   } else {
       hideScriptEditor();
+      scriptButton.title = "Show Script Editor";
       scriptButton.innerHTML = "Show Script Editor";
-   } 
+      scriptButton.src = "images/eyeClose.png";
+   }
 }
 
 // Shows the script editor when the button is clicked

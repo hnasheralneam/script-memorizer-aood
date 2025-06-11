@@ -169,6 +169,18 @@ button:hover {
   cursor: pointer;
 }
 
+.sidebarHeader {
+   display: flex;
+}
+
+.logoImage {
+   width: 2.5rem;
+   height: 2rem;
+   position: relative;
+   top: 0.5rem;
+   
+}
+
 /* div box for the settings */
 .settingsPanel {
    background-color: var(--background-dark);
@@ -243,7 +255,7 @@ h2 {
 /* Saved Scripts at the top */
 .scriptDescription {
    color: var(--font-color);
-   padding: 1rem;
+   padding: 0.4rem;
 }
 
 .scriptRunner {
@@ -297,7 +309,18 @@ h2 {
 
 .output {
    padding: 1rem;
-   background-color: #f2f2f2;
    border-radius : 0.5rem;
    padding-top: 3rem;
+}
+
+#imageButton {
+   height: 1.9rem;
+
+}
+
+#scriptButton {
+   border-radius: 2rem;
+   height: 3rem;
+   width: 3rem;
+   background-color: white;
 }

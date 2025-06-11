@@ -8,7 +8,10 @@
 <body>
    <!-- div for sidebar -->
    <div class="sidebar">
-      <h1 class = "scriptDescription">Saved Scripts</h1>
+      <div class="sidebarHeader">
+         <h1 class = "scriptDescription">Saved Scripts</h1>
+         <img class = "logoImage" src="./images/logo.png" alt="Script Memorizer Logo">
+      </div>
       <ul class="saved-scripts">
          <h2>Pinned Scripts</h2>
          <li class="new-script" onclick="addNewScript()"> + New Script</li>
@@ -20,6 +23,7 @@
 
       <div class="header">
          <h2 id = "scriptName">Script Name</h2>
+         <button onclick="toggleScriptEditor()" id ="scriptButton"><img id = "imageButton" title = "Show Script Editor" src = "images/eyeOpen.png"></button>
       </div>
       <br>
       <div class = "settingsPanel">
@@ -31,7 +35,7 @@
       </div>
 
       <br>
-      <button onclick="toggleScriptEditor()" id = "scriptButton">Hide Script Editor</button>
+
       <div class="input-parent">
          
       <div class = inputContainer>

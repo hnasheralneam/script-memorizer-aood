@@ -279,15 +279,18 @@ h2 {
 }
 
 #runButton {
-   top: 0.3rem;
-   left: 72rem;
+   top: 0.5rem;
+   left: 71rem;
    background-color: var(--main);
    font-size: 1.2rem;
+   border-radius: 0.5rem;
+   width: 4rem;
+   height: 2rem;
 }
 
 #settings {
    top: 0.3rem;
-   left: 69rem;
+   left: 68rem;
    background-color: var(--main);
 }
 

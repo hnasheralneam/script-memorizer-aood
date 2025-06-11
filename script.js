@@ -121,7 +121,8 @@ function buttonInfo(element, message) {
 
 function main(arg, splitter) {
    hideScriptEditor();
-   document.getElementById("scriptButton").innerHTML = "Show Script Editor";
+   document.getElementById("imageButton").src = "images/eyeClose.png";
+   document.getElementById("imageButton").title = "Show Script Editor";
    
    let input = arg;
    let string = input;
@@ -241,7 +242,8 @@ function parseText(raw) {
       }
    }
    showOnPage2(htmlOutput);
-   document.getElementById("scriptButton").innerHTML = "Show Script Editor";
+   document.getElementById("imageButton").src = "images/eyeClose.png";
+   document.getElementById("imageButton").title = "Hide Script Editor";
 }
 
 //populates the dropdown with characters
@@ -474,15 +476,13 @@ function hideAll() {
 //Shows the script editor after it has disappeared
 function toggleScriptEditor() {
    let scriptButton = document.getElementById("imageButton");
-   if (scriptButton.title === "Show Script Editor") {
+   if (scriptButton.title === "Hide Script Editor") {
       showScriptEditor();
-      scriptButton.title = "Hide Script Editor";
-      scriptButton.innerHTML = "Hide Script Editor";
+      scriptButton.title = "Show Script Editor";
       scriptButton.src = "images/eyeOpen.png";
    } else {
       hideScriptEditor();
-      scriptButton.title = "Show Script Editor";
-      scriptButton.innerHTML = "Show Script Editor";
+      scriptButton.title = "Hide Script Editor";
       scriptButton.src = "images/eyeClose.png";
    }
 }

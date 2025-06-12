@@ -4,7 +4,7 @@
    --main: #6d9bf8fb;
    --accent: #9bc0ff;
    --accent-light: #eeeeee;
-   --main-dark: #2a1d92;
+   --main-dark: #85a6ff;
    --font-color: rgb(29, 29, 29);
    --text-on-dark: #4f4f4f;
 }
@@ -19,7 +19,7 @@
 /* entire website */
 body {
    display: grid;
-   grid-template-columns: 18rem auto;
+   grid-template-columns: 40vh auto;
    background-color: var(--background);
 }
 
@@ -33,12 +33,12 @@ body {
 
 /* div box for entire right side */
 .content {
-   margin: .5rem 1rem;
+   margin: 1vw;
 }
 
 /* div box for entire sidebar except for the heading */
 .saved-scripts {
-   margin: 0 1rem;
+   margin: 1vw;
    list-style-type: none;
 }
 
@@ -46,10 +46,11 @@ body {
 .saved-scripts li {
    display: block;
    background-color: #fff;
-   border-radius: .5rem;
-   margin: .5rem 0;
+   border-radius: 1vw;
+   margin: 0.3vw;
+   width: 13vw;
    overflow: hidden;
-   padding: 1rem;
+   padding: 1vw;
    color: var(--font-color);
 }
 
@@ -66,7 +67,7 @@ li.active {
 }
 
 p {
-   line-height: 2rem;
+   line-height: 6vh;
    color: var(--font-color);
 }
 
@@ -75,9 +76,8 @@ p {
 .hidden {
    background-color: var(--accent-light);
    transition: .2s;
-   margin: 0 0;
-   padding: .15rem .3rem;
-   border-radius: .4rem;
+   border-radius: .4vw;
+   padding: 0.5vw;
    color: var(--accent-light)
 }
 
@@ -90,9 +90,14 @@ p {
 /* words when they are shown */
 .shown {
    background-color: var(--accent);
-   border-radius: .4rem;
-   padding: .15rem .3rem;
+   border-radius: .4vw;
+   padding: 0.5vw;
    color: var(--font-color);
+}
+
+output-parent{
+   height: 50vh;
+   background-color: #4f4f4f
 }
 
 /* script input */
@@ -100,12 +105,11 @@ p {
    box-sizing: border-box;
    display: block;
    width: 100%;
-   padding: .5rem;
+   padding: .5vw;
    background-color: var(--background-dark);
-   border-radius: 0rem;
    font-family: serif;
-   font-size: 1rem;
-   height: 15rem;
+   font-size: 1vw;
+   height: 32vh;
 }
 
 /* div box for script input */
@@ -118,10 +122,10 @@ button {
    border: none;
    background-color: var(--main);
    color: var(--text-on-dark);
-   text-shadow: 0 0 .1rem #222;
-   padding: .3rem .5rem;
-   border-radius: .3rem;
-   font-size: .9rem;
+   text-shadow: 0 0 .1vw #222;
+   padding: 0.5vw 0.5vw;
+   border-radius: 0.5vw;
+   font-size: 1vw;
    transition: .15s;
    color: var(--text-on-dark);
 }
@@ -140,30 +144,30 @@ button:hover {
 .settings-menu {
    position: absolute;
    background: var(--background);
-   border: 1px solid #ccc;
-   border-radius: 6px;
-   padding: 6px;
-   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+   border: 0.1vw solid #ccc;
+   border-radius: 0.4vw;
+   padding: 0.5vw;
+   box-shadow: 0 1vw 2vw rgba(0, 0, 0, 0.15);
    z-index: 100;
 }
 
 /* buttons for the settings in the sidebar */
 .settings-menu button {
    display: block;
-   width: 100%;
-   margin: 4px 0;
+   width: 5vw;
+   margin: 0.5vw 0;
 }
 
 /* div box for both the settings button and the label in the sidebar */
 .script-item-content {
    position: relative;
-   padding-right: 2.5rem;
+   padding-right: 1vw;
 }
 
 /* cog emoji for the scripts */
 .btn-settings {
   position: absolute;
-  right: 0.5rem;
+  right: 0.5vw;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
@@ -174,10 +178,10 @@ button:hover {
 }
 
 .logoImage {
-   width: 2.5rem;
-   height: 2rem;
+   width: 3vw;
+   height: 5vh;
    position: relative;
-   top: 0.5rem;
+   top: 0.5vh;
    
 }
 
@@ -186,37 +190,36 @@ button:hover {
    background-color: var(--background-dark);
    padding-top: 2vh;
    padding-bottom: 2vh;
-   border-radius: 0.5rem;
-   padding-left: 2vw;
-   padding-right: 4vw;
+   border-radius: 0.5vw;
    display: flex;
-   gap: 7vw;
+   gap: 5vw;
    align-items: center;
    height: 5vh;
+   padding-right: 2vw;
+   position: relative;
 }
 
 /* words for skip every nth word */
 #skipSetting {
    display: flex;
    align-items: center;
-   gap: 8px;
+   gap: 1vw;
 }
 
 /* skip every nth word input box */
 input[type="number"],
 select {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  min-width: 60px;
+  padding: 0.5vw 2vh;
+  border-radius: 0.5vw;
+  font-size: 1vw;
+  min-width: 3vw;
 }
 
 /* settings button next to script name (the cog emoji) */
 #settings {
    background-color: var(--background);
-   font-size: 1.2rem;
-   padding: 0.1rem;
+   font-size: 1.5vw;
+   padding: 0.1vw;
 }
 
 /* script name and settings button */
@@ -228,23 +231,22 @@ select {
 /* close button on settings panel */
 .closeButton {
    position: absolute;
-   top: 12vh;
+   top: 13vh;
    right: 1.5vw;
    background: #8392ff;
    border: none;
    border-radius: 50%;
-   width: 32px;
-   height: 32px;
-   font-size: 18px;
+   width: 2.5vw;
+   height: 5vh;
+   font-size: 2.5vh;
    cursor: pointer;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* script name at the top */
 #scriptName {
    font-size: 5vh;
    font-weight: bold;
-   margin-bottom: 1rem;
+   margin-bottom: 1vh;
    color: var(--font-color);
 }
 
@@ -255,75 +257,73 @@ h2 {
 /* Saved Scripts at the top */
 .scriptDescription {
    color: var(--font-color);
-   padding: 0.4rem;
+   padding-right: 0.3vh;
 }
 
 .scriptRunner {
    position: absolute;
    background-color: rgb(189, 218, 255);
    width: 100%;
-   height: 3rem;
-   top: 14.5rem;
-   border-radius: 0.5rem;
+   height: 6.5vh;
+   top: 27vh;
+   border-radius: 0.5vh;
 }
 
 .scriptRunner button {
    position: absolute;
    color: var(--text-on-dark);
-   padding: 0.3rem 0.6rem;
-   border-radius: 2rem;
-   font-size: 1.5rem;
+   padding: 0.1vh;
+   border-radius: 3vh;
+   font-size: 1vh;
    cursor: pointer;
-   height: 2.5rem;
-   width: 2.5rem;
+   height: 5vh;
+   width: 2.7vw;
 }
 
 #runButton {
-   top: 0.5rem;
-   left: 71rem;
+   top: 1.2vh;
+   left: 74vw;
    background-color: var(--main);
-   font-size: 1.2rem;
-   border-radius: 0.5rem;
-   width: 4rem;
-   height: 2rem;
+   font-size: 2.5vh;
+   border-radius: 0.6vh;
+   width: 4vw;
+   height: 4vh;
 }
 
 #settings {
-   top: 0.3rem;
-   left: 68rem;
+   top: 0.9vh;
+   left: 71vw;
    background-color: var(--main);
 }
 
 #addFile{
-   top: 0.3rem;
-   left: 0.5rem;
+   top: 1.0vh;
+   width: 2.4vw;
+   left: 0.5vw;
+   font-size: 3vh;
    background-color: var(--main);
 }
 
 .infoBox {
    position: absolute;
    background-color: white;
-   border-radius: 0.5rem;
-   font-size: 0.8rem;
+   border-radius: 0.5vh;
+   font-size: 1.7vh;
    text-align: center;
-   padding: 0.5rem;
-   border: 1px solid #ccc;
+   padding: 0.6vw;
 }
 
 .output {
-   padding: 1rem;
-   border-radius : 0.5rem;
-   padding-top: 3rem;
+   border-radius : 0.5vw;
 }
 
 #imageButton {
-   height: 1.9rem;
-
+   height: 5vh;
+   top: 0.4vh;
 }
 
 #scriptButton {
-   border-radius: 2rem;
-   height: 3rem;
-   width: 3rem;
+   border-radius: 0.5vw;
+   width: 2vw;
    background-color: white;
 }

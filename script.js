@@ -82,7 +82,7 @@ async function init() {
    buttonInfo(document.getElementById("runButton"), "Run Script");
    buttonInfo(document.getElementById("settings"), "More Settings");
    buttonInfo(document.getElementById("scriptButton"), "Show/Hide Script Editor");
-   buttonInfo(document.getElementById("addFile"), "Add script file (TO BE IMPLEMENTED)");
+   buttonInfo(document.getElementById("addFile"), "Add script file");
 
 
 

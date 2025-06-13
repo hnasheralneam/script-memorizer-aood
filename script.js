@@ -123,27 +123,31 @@ function main(arg, splitter) {
    hideScriptEditor();
    document.getElementById("imageButton").src = "images/eyeClose.png";
    document.getElementById("imageButton").title = "Show Script Editor";
-   
-   let input = arg;
-   let string = input;
-   if (string.length < 1) return;
 
-   let words = string.split(splitter);
+   let input = arg;
+   if (input.length < 1) return;
+
+   // Step 1: extract parentheticals and store them in a map
+   let parentheticals = [];
+   let tempInput = input.replace(/\([^\)]*\)/g, match => {
+      parentheticals.push(match);
+      return `__P${parentheticals.length - 1}__`;
+   });
+
+   let words = tempInput.split(splitter);
    let pos = 0;
    let hideWordEvery = document.querySelector("#skip-distance").value || 2;
    let htmlOutput = "";
 
    for (let word of words) {
-      // skip if just whitespace
       if (word.trim() === "") continue;
 
-      // check if word is inside parentheses
-      const isParenthetical = word.trim().startsWith("(") && word.trim().endsWith(")");
-
-      // always show parentheticals
-      if (isParenthetical) {
-         htmlOutput += word + " ";
-         continue; 
+      // Step 2: check if this is a placeholder for a parenthetical
+      let placeholderMatch = word.match(/^__P(\d+)__$/);
+      if (placeholderMatch) {
+         let original = parentheticals[parseInt(placeholderMatch[1])];
+         htmlOutput += original + " ";
+         continue;
       }
 
       pos++;
@@ -159,10 +163,12 @@ function main(arg, splitter) {
          htmlOutput += word + " ";
       }
    }
+
    document.querySelector(".output").innerHTML = htmlOutput;
    SaveManager.saveScript(activeScript.id, activeScript.name, document.getElementById("input").value);
    return htmlOutput;
 }
+
 
 function hiddenWords(element) {
    if (element.classList.contains("shown")) {
@@ -534,6 +540,7 @@ function changeName() {
    if (script) script.name = name;
 
    SaveManager.saveScript(activeScript.id, name, document.getElementById("input").value);
+   document.getElementById("scriptName").textContent = name;
    showSavedScripts();
 }
 

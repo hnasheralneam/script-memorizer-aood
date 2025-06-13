@@ -489,7 +489,7 @@ function toggleScriptEditor() {
 
 // Shows the script editor when the button is clicked
 function showScriptEditor() {
-   document.querySelector(".inputContainer").style.height = "15rem";
+   document.querySelector(".inputContainer").style.height = "32vh";
    document.querySelector(".inputContainer").style.opacity = "1";
    document.querySelector(".inputContainer").style.pointerEvents = "auto";
 }
@@ -497,7 +497,7 @@ function showScriptEditor() {
 
 // Hides the script editor when the button is clicked
 function hideScriptEditor() {
-   document.querySelector(".inputContainer").style.height = "2rem";
+   document.querySelector(".inputContainer").style.height = "0";
    document.querySelector(".inputContainer").style.opacity = "0";
    document.querySelector(".inputContainer").style.pointerEvents = "none";
 }

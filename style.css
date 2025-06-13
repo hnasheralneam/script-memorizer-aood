@@ -231,8 +231,8 @@ select {
 /* close button on settings panel */
 .closeButton {
    position: absolute;
-   top: 13vh;
-   right: 1.5vw;
+   top: 1vh;
+   right: 1vw;
    background: #8392ff;
    border: none;
    border-radius: 50%;
@@ -265,7 +265,7 @@ h2 {
    background-color: rgb(189, 218, 255);
    width: 100%;
    height: 6.5vh;
-   top: 27vh;
+   top: 32vh;
    border-radius: 0.5vh;
 }
 
@@ -282,7 +282,7 @@ h2 {
 
 #runButton {
    top: 1.2vh;
-   left: 74vw;
+   left: 73vw;
    background-color: var(--main);
    font-size: 2.5vh;
    border-radius: 0.6vh;
@@ -292,7 +292,7 @@ h2 {
 
 #settings {
    top: 0.9vh;
-   left: 71vw;
+   left: 70vw;
    background-color: var(--main);
 }
 
@@ -314,7 +314,9 @@ h2 {
 }
 
 .output {
+   position: relative;
    border-radius : 0.5vw;
+   top: 8vh;
 }
 
 #imageButton {
@@ -325,5 +327,5 @@ h2 {
 #scriptButton {
    border-radius: 0.5vw;
    width: 2vw;
-   background-color: white;
+   background-color: var(--background);
 }
